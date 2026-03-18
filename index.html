@@ -659,6 +659,49 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         </div>
       </div>
 
+      <!-- Export Data -->
+      <div class="card" style="border-color:rgba(0,184,255,0.3);">
+        <div class="card-header"><div class="card-title" style="color:var(--accent2);">📤 Export to CSV</div></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;">Download your data as a CSV file to open in Excel, Google Sheets, or share with your doctor.</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+            <div>
+              <div class="input-label" style="margin-bottom:6px;">From Date</div>
+              <input class="input-field" type="date" id="export-from" oninput="updateExportLabel()" style="font-size:13px;padding:10px 12px;">
+            </div>
+            <div>
+              <div class="input-label" style="margin-bottom:6px;">To Date</div>
+              <input class="input-field" type="date" id="export-to" oninput="updateExportLabel()" style="font-size:13px;padding:10px 12px;">
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <button class="btn btn-secondary" onclick="setExportRange('today')"    style="flex:1;font-size:12px;padding:8px 6px;">Today</button>
+            <button class="btn btn-secondary" onclick="setExportRange('week')"     style="flex:1;font-size:12px;padding:8px 6px;">Last 7 Days</button>
+            <button class="btn btn-secondary" onclick="setExportRange('month')"    style="flex:1;font-size:12px;padding:8px 6px;">Last 30 Days</button>
+            <button class="btn btn-secondary" onclick="setExportRange('alltime')"  style="flex:1;font-size:12px;padding:8px 6px;">All Time</button>
+          </div>
+
+          <div style="font-size:11px;color:var(--text3);margin-bottom:12px;" id="export-range-label">Select a range above or pick custom dates.</div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-secondary" onclick="exportCSV('food')" style="width:100%;font-size:13px;justify-content:flex-start;gap:10px;">
+              🍽️ <span><strong>Food Log</strong> — every item, meal, calories & all nutrients</span>
+            </button>
+            <button class="btn btn-secondary" onclick="exportCSV('daily')" style="width:100%;font-size:13px;justify-content:flex-start;gap:10px;">
+              📊 <span><strong>Daily Summary</strong> — one row per day with totals</span>
+            </button>
+            <button class="btn btn-secondary" onclick="exportCSV('water')" style="width:100%;font-size:13px;justify-content:flex-start;gap:10px;">
+              💧 <span><strong>Water Intake</strong> — every water entry with time</span>
+            </button>
+            <button class="btn btn-secondary" onclick="exportCSV('bathroom')" style="width:100%;font-size:13px;justify-content:flex-start;gap:10px;">
+              🚽 <span><strong>Bathroom Log</strong> — pee & poop entries with details</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Danger Zone -->
       <div class="card" style="border-color:rgba(255,107,107,0.3);">
         <div class="card-header"><div class="card-title" style="color:var(--accent3);">Data</div></div>
@@ -1052,6 +1095,208 @@ async function copyLink(type) {
   catch(e) { showToast('Copy the link above'); }
 }
 
+// ===================== CSV EXPORT =====================
+function initExportDates() {
+  const toEl   = document.getElementById('export-to');
+  const fromEl = document.getElementById('export-from');
+  if (!toEl || fromEl.value) return; // already set
+  const today = todayKey();
+  toEl.value   = today;
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
+  fromEl.value = weekAgo.toISOString().split('T')[0];
+  updateExportLabel();
+}
+
+function setExportRange(range) {
+  const today = new Date();
+  const toEl   = document.getElementById('export-to');
+  const fromEl = document.getElementById('export-from');
+  toEl.value = todayKey();
+  if (range === 'today') {
+    fromEl.value = todayKey();
+  } else if (range === 'week') {
+    const d = new Date(today); d.setDate(today.getDate() - 6);
+    fromEl.value = d.toISOString().split('T')[0];
+  } else if (range === 'month') {
+    const d = new Date(today); d.setDate(today.getDate() - 29);
+    fromEl.value = d.toISOString().split('T')[0];
+  } else if (range === 'alltime') {
+    // Find earliest date in all data
+    const allKeys = [
+      ...Object.keys(state.log),
+      ...Object.keys(state.water),
+      ...Object.keys(state.bathroom)
+    ].filter(Boolean).sort();
+    fromEl.value = allKeys.length ? allKeys[0] : todayKey();
+  }
+  updateExportLabel();
+}
+
+function updateExportLabel() {
+  const fromEl = document.getElementById('export-from');
+  const toEl   = document.getElementById('export-to');
+  const label  = document.getElementById('export-range-label');
+  if (!fromEl || !toEl || !label) return;
+  if (fromEl.value && toEl.value) {
+    const from = new Date(fromEl.value + 'T12:00:00');
+    const to   = new Date(toEl.value   + 'T12:00:00');
+    const days = Math.round((to - from) / 86400000) + 1;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    label.textContent = `${months[from.getMonth()]} ${from.getDate()} – ${months[to.getMonth()]} ${to.getDate()}, ${to.getFullYear()} (${days} day${days !== 1 ? 's' : ''})`;
+  }
+}
+
+function getExportDateRange() {
+  const fromEl = document.getElementById('export-from');
+  const toEl   = document.getElementById('export-to');
+  const from   = fromEl.value || todayKey();
+  const to     = toEl.value   || todayKey();
+  // Build array of all date keys in range
+  const keys = [];
+  const cur = new Date(from + 'T12:00:00');
+  const end = new Date(to   + 'T12:00:00');
+  while (cur <= end) {
+    keys.push(cur.toISOString().split('T')[0]);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return { from, to, keys };
+}
+
+function csvEscape(val) {
+  if (val === null || val === undefined) return '';
+  const s = String(val);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`📥 ${filename} downloaded!`);
+}
+
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const h = d.getHours(); const m = d.getMinutes().toString().padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM'; const h12 = h % 12 || 12;
+  return `${h12}:${m} ${ampm}`;
+}
+
+function exportCSV(type) {
+  updateExportLabel();
+  const { from, to, keys } = getExportDateRange();
+  const stamp = `${from}_to_${to}`;
+
+  if (type === 'food') {
+    // One row per food entry
+    const headers = [
+      'Date','Meal','Food Name','Calories','Protein (g)','Total Carbs (g)','Total Fat (g)',
+      'Fiber (g)','Total Sugars (g)','Added Sugars (g)','Sodium (mg)','Cholesterol (mg)',
+      'Saturated Fat (g)','Trans Fat (g)','Vitamin A (mcg)','Vitamin C (mg)',
+      'Vitamin D (mcg)','Vitamin B12 (mcg)','Calcium (mg)','Iron (mg)',
+      'Potassium (mg)','Magnesium (mg)','Zinc (mg)','Portion'
+    ];
+    const rows = [headers];
+    keys.forEach(key => {
+      (state.log[key] || []).forEach(e => {
+        const n = e.nutrients || {};
+        rows.push([
+          key, e.meal || '', e.name || '',
+          Math.round(n.calories||0), +(n.protein||0).toFixed(1),
+          +(n.totalCarbs||0).toFixed(1), +(n.totalFat||0).toFixed(1),
+          +(n.dietaryFiber||0).toFixed(1), +(n.totalSugars||0).toFixed(1),
+          +(n.addedSugars||0).toFixed(1), Math.round(n.sodium||0),
+          Math.round(n.cholesterol||0), +(n.saturatedFat||0).toFixed(1),
+          +(n.transFat||0).toFixed(1), +(n.vitaminA||0).toFixed(1),
+          +(n.vitaminC||0).toFixed(1), +(n.vitaminD||0).toFixed(1),
+          +(n.vitaminB12||0).toFixed(2), Math.round(n.calcium||0),
+          +(n.iron||0).toFixed(1), Math.round(n.potassium||0),
+          Math.round(n.magnesium||0), +(n.zinc||0).toFixed(1),
+          e.portionLabel || '100%'
+        ]);
+      });
+    });
+    if (rows.length === 1) { showToast('No food data in that range'); return; }
+    downloadCSV(`food_log_${stamp}.csv`, rows);
+
+  } else if (type === 'daily') {
+    // One row per day — summed totals
+    const headers = [
+      'Date','Total Calories','Protein (g)','Total Carbs (g)','Total Fat (g)',
+      'Fiber (g)','Sodium (mg)','Sugars (g)','Vitamin C (mg)','Vitamin D (mcg)',
+      'Calcium (mg)','Iron (mg)','Potassium (mg)','Water (oz)','Pee Count','Poop Count',
+      'Items Logged'
+    ];
+    const rows = [headers];
+    keys.forEach(key => {
+      const entries  = state.log[key] || [];
+      const waterOz  = (state.water[key] || []).reduce((s,e) => s + e.oz, 0);
+      const bath     = state.bathroom[key] || [];
+      const pee      = bath.filter(e => e.type === 'pee').length;
+      const poop     = bath.filter(e => e.type === 'poop').length;
+      if (!entries.length && !waterOz && !bath.length) return; // skip empty days
+      const t = {};
+      NUTRIENTS_KEY.forEach(k => t[k] = 0);
+      entries.forEach(e => NUTRIENTS_KEY.forEach(k => { t[k] += (e.nutrients[k]||0); }));
+      rows.push([
+        key, Math.round(t.calories), +(t.protein).toFixed(1),
+        +(t.totalCarbs).toFixed(1), +(t.totalFat).toFixed(1),
+        +(t.dietaryFiber).toFixed(1), Math.round(t.sodium),
+        +(t.totalSugars).toFixed(1), +(t.vitaminC).toFixed(1),
+        +(t.vitaminD).toFixed(1), Math.round(t.calcium),
+        +(t.iron).toFixed(1), Math.round(t.potassium),
+        +waterOz.toFixed(1), pee, poop, entries.length
+      ]);
+    });
+    if (rows.length === 1) { showToast('No data in that range'); return; }
+    downloadCSV(`daily_summary_${stamp}.csv`, rows);
+
+  } else if (type === 'water') {
+    const headers = ['Date','Time','Amount (oz)','Running Total (oz)'];
+    const rows = [headers];
+    keys.forEach(key => {
+      const entries = [...(state.water[key] || [])].sort((a,b) => a.timestamp - b.timestamp);
+      let running = 0;
+      entries.forEach(e => {
+        running += e.oz;
+        rows.push([key, formatTime(e.timestamp), +e.oz.toFixed(1), +running.toFixed(1)]);
+      });
+    });
+    if (rows.length === 1) { showToast('No water data in that range'); return; }
+    downloadCSV(`water_log_${stamp}.csv`, rows);
+
+  } else if (type === 'bathroom') {
+    const PEE_LABEL  = { clear:'Clear', pale:'Pale Yellow', yellow:'Yellow', dark:'Dark Yellow', amber:'Amber', orange:'Orange', brown:'Brown', pink:'Pink/Red' };
+    const headers = ['Date','Time','Type','Pee Color','Poop Bristol Type','Bristol Description'];
+    const BRISTOL = ['','Separate Hard Lumps','Lumpy Sausage','Sausage w/ Cracks','Smooth Sausage (Normal)','Soft Blobs','Fluffy Pieces','Liquid'];
+    const rows = [headers];
+    keys.forEach(key => {
+      const entries = [...(state.bathroom[key] || [])].sort((a,b) => a.timestamp - b.timestamp);
+      entries.forEach(e => {
+        rows.push([
+          key,
+          formatTime(e.timestamp),
+          e.type === 'pee' ? 'Pee' : 'Poop',
+          e.type === 'pee' ? (PEE_LABEL[e.color] || '') : '',
+          e.type === 'poop' && e.consistency ? `Type ${e.consistency}` : '',
+          e.type === 'poop' && e.consistency ? (BRISTOL[e.consistency] || '') : '',
+        ]);
+      });
+    });
+    if (rows.length === 1) { showToast('No bathroom data in that range'); return; }
+    downloadCSV(`bathroom_log_${stamp}.csv`, rows);
+  }
+}
+
 // ===================== NAV =====================
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1062,7 +1307,7 @@ function showPage(id, btn) {
   if (id === 'history') { historyViewMonth = new Date(); renderHistory(); }
   if (id === 'dashboard') renderDashboard();
   if (id === 'body') { renderWater(); renderBathroom(); }
-  if (id === 'settings') { buildShareLinks(); if (!state.readOnly) buildViewLink(); }
+  if (id === 'settings') { buildShareLinks(); if (!state.readOnly) { buildViewLink(); initExportDates(); } }
   const fab = document.getElementById('add-fab');
   if (!state.readOnly) fab.style.display = (id === 'log' || id === 'dashboard') ? '' : 'none';
 }
