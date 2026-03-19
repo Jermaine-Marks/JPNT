@@ -732,6 +732,17 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         </div>
       </div>
 
+      <!-- Danger Zone -->
+      <div class="card" style="border-color:rgba(255,107,107,0.3);">
+        <div class="card-header"><div class="card-title" style="color:var(--accent3);">Data</div></div>
+        <div class="card-body">
+          <button class="btn btn-danger" onclick="clearTodayData()" style="margin-bottom:10px;width:100%;">Clear Today's Log</button>
+          <button class="btn btn-danger" onclick="clearAllData()" style="width:100%;">Clear All Data</button>
+        </div>
+      </div>
+      <div style="height:80px;"></div>
+    </div><!-- /page-settings -->
+
     <!-- FITNESS PAGE -->
     <div class="page" id="page-fitness">
       <div class="tab-row">
@@ -848,10 +859,10 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
           </div>
         </div>
         <div style="height:80px;"></div>
-      </div>
-    </div>
+      </div><!-- /fitness-weight-view -->
+    </div><!-- /page-fitness -->
 
-    <!-- SETTINGS PAGE -->
+  </div><!-- /content -->
 
   <!-- NAV -->
   <nav id="nav">
@@ -1591,24 +1602,30 @@ function renderDashboard() {
     const todayWeights = state.weights[todayKey()] || [];
     const wStrength = todayWorkouts.filter(w => w.category === 'strength');
     const wCardio   = todayWorkouts.filter(w => w.category === 'cardio');
-    const totalCardioMins = wCardio.reduce((s,w) => s + (w.duration||0), 0);
+    const totalCardioMins  = wCardio.reduce((s,w) => s + (w.duration||0), 0);
     const totalCardioMiles = wCardio.reduce((s,w) => s + (w.distance||0), 0);
     const latestWeight = todayWeights.length ? todayWeights[todayWeights.length-1].weight : null;
     const burned = calcBurnedCals(todayKey());
-    if (todayWorkouts.length || latestWeight) {
-      dfc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,0.25);">
-        <div class="card-header"><div class="card-title" style="color:var(--accent);">💪 Fitness Today</div>
-          <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">~${burned} cal burned</div>
-        </div>
-        <div class="card-body" style="padding-top:0;">
-          <div style="display:flex;flex-wrap:wrap;gap:12px;">
-            ${wStrength.length ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:16px;">💪</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${wStrength.length} workout${wStrength.length!==1?'s':''}</div><div style="font-size:10px;color:var(--text3);">${wStrength.map(w=>WORKOUT_TYPE_LABEL[w.type]||w.type).join(', ')}</div></div></div>` : ''}
-            ${totalCardioMins ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:16px;">🏃</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${totalCardioMins} min cardio</div><div style="font-size:10px;color:var(--text3);">${totalCardioMiles > 0 ? totalCardioMiles.toFixed(2)+' mi' : 'distance not logged'}</div></div></div>` : ''}
-            ${latestWeight ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:16px;">⚖️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent4);">${latestWeight} lbs</div><div style="font-size:10px;color:var(--text3);">today's weight</div></div></div>` : ''}
-          </div>
-        </div>
+
+    // Always show fitness card on dashboard
+    let fitnessContent = '';
+    if (!todayWorkouts.length && !latestWeight) {
+      fitnessContent = `<div style="font-size:12px;color:var(--text3);">No fitness activity logged today. Tap <strong style="color:var(--accent);">Fitness</strong> in the nav to log a workout or weight.</div>`;
+    } else {
+      fitnessContent = `<div style="display:flex;flex-wrap:wrap;gap:12px;">
+        ${wStrength.length ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">💪</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${wStrength.length} workout${wStrength.length!==1?'s':''}</div><div style="font-size:10px;color:var(--text3);">${wStrength.map(w=>WORKOUT_TYPE_LABEL[w.type]||w.type).join(', ')}</div></div></div>` : ''}
+        ${totalCardioMins ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">🏃</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${totalCardioMins} min cardio</div><div style="font-size:10px;color:var(--text3);">${totalCardioMiles > 0 ? totalCardioMiles.toFixed(2)+' mi' : 'distance not logged'}</div></div></div>` : ''}
+        ${latestWeight ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">⚖️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent4);">${latestWeight} lbs</div><div style="font-size:10px;color:var(--text3);">today's weight</div></div></div>` : ''}
       </div>`;
-    } else { dfc.innerHTML = ''; }
+    }
+
+    dfc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,0.25);">
+      <div class="card-header">
+        <div class="card-title" style="color:var(--accent);">💪 Fitness Today</div>
+        ${burned ? `<div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">~${burned} cal burned</div>` : ''}
+      </div>
+      <div class="card-body" style="padding-top:0;">${fitnessContent}</div>
+    </div>`;
   } else if (dfc) { dfc.innerHTML = ''; }
   const iw = document.getElementById('insights-wrap');
   iw.innerHTML = '';
