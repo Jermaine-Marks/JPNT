@@ -188,11 +188,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .portion-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,0.08); }
   .portion-pill-sub { font-size: 10px; color: var(--text3); margin-top: 2px; font-weight: 400; }
 
-  /* CAMERA */
-  #camera-preview { width: 100%; border-radius: var(--radius-sm); overflow: hidden; display: none; }
-  #camera-preview video { width: 100%; display: block; }
-  #photo-canvas { display: none; }
-
   /* TABS */
   .tab-row { display: flex; gap: 6px; margin-bottom: 12px; }
   .tab { padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text3); transition: all 0.2s; }
@@ -439,6 +434,19 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
           <div class="cal-stat"><div class="cal-stat-label">Deficit</div><div class="cal-stat-val" id="deficit-cal-display" style="color:var(--accent);">0</div></div>
         </div>
       </div>
+      <!-- Miles + Weight mini trackers -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:linear-gradient(135deg,#0d1a2e,#0a1628);border:1px solid rgba(0,184,255,0.25);border-radius:var(--radius);padding:14px 16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--accent2);margin-bottom:4px;">🏃 TODAY'S MILES</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1;" id="dash-miles-val">0.00</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="dash-miles-sub">No cardio logged</div>
+        </div>
+        <div style="background:linear-gradient(135deg,#1a1508,#211c0a);border:1px solid rgba(255,209,102,0.25);border-radius:var(--radius);padding:14px 16px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--accent4);margin-bottom:4px;">⚖️ TODAY'S WEIGHT</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1;" id="dash-weight-val">—</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="dash-weight-sub">Not logged today</div>
+        </div>
+      </div>
       <div id="insights-wrap"></div>
       <div id="dashboard-water-card"></div>
       <div id="dashboard-bathroom-card"></div>
@@ -677,7 +685,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
             💾 Data saved locally on your device<br>
             📴 Works offline — 200+ foods built-in<br>
             🔗 Shareable read-only links<br>
-            📷 Barcode + OCR label scanning<br>
+            🔍 Food search (Open Food Facts + USDA)<br>
             🚽 Bathroom visit tracking<br>
             💧 Hydration tracking<br>
             💊 Supplement quick-log<br>
@@ -802,6 +810,27 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
           </div>
         </div>
 
+        <!-- Log Wellness -->
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-header"><div class="card-title">🧘 Log Wellness</div></div>
+          <div class="card-body">
+            <div class="input-label" style="margin-bottom:8px;">Activity</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+              <div class="workout-type-btn" id="wellness-stretch-btn" data-wtype="stretch" onclick="selectWellnessType(this)">🧘 Stretching</div>
+              <div class="workout-type-btn" id="wellness-sauna-btn" data-wtype="sauna" onclick="selectWellnessType(this)">🔥 Sauna</div>
+              <div class="workout-type-btn" id="wellness-steam-btn" data-wtype="steam" onclick="selectWellnessType(this)">💨 Steam Room</div>
+              <div class="workout-type-btn" id="wellness-hottub-btn" data-wtype="hottub" onclick="selectWellnessType(this)">🛁 Hot Tub</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div><div class="input-label">Duration (min)</div><input class="input-field" type="number" id="wellness-duration" placeholder="e.g. 20" style="font-size:14px;padding:10px 12px;"></div>
+              <div><div class="input-label">Date</div><input class="input-field" type="date" id="wellness-date" style="font-size:14px;padding:10px 12px;"></div>
+            </div>
+            <div class="input-label" style="margin-bottom:6px;">Notes (optional)</div>
+            <input class="input-field" type="text" id="wellness-notes" placeholder="e.g. post-workout, 180°F..." style="margin-bottom:12px;">
+            <button class="btn btn-primary" onclick="logWellness()">🧘 Log Wellness</button>
+          </div>
+        </div>
+
         <!-- Today's log -->
         <div class="section-label">Today's Activity</div>
         <div class="card" id="workout-log-card">
@@ -905,7 +934,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     <div class="modal-title">Add Food</div>
     <div class="btn-row" style="flex-wrap:wrap;gap:6px;">
       <button class="btn btn-secondary" id="tab-search" onclick="setAddMode('search')" style="flex:1;font-size:12px;min-width:60px;">🔍 Search</button>
-      <button class="btn btn-secondary" id="tab-camera" onclick="setAddMode('camera')" style="flex:1;font-size:12px;min-width:60px;">📷 Camera</button>
       <button class="btn btn-secondary" id="tab-manual" onclick="setAddMode('manual')" style="flex:1;font-size:12px;min-width:60px;">✏️ Manual</button>
       <button class="btn btn-secondary" id="tab-supplement" onclick="setAddMode('supplement')" style="flex:1;font-size:12px;min-width:60px;">💊 Supps</button>
     </div>
@@ -919,26 +947,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         <div class="spinner"></div><span style="font-size:14px;color:var(--text3);">Searching nutrition data…</span>
       </div>
       <div id="search-results-wrap"></div>
-    </div>
-    <!-- CAMERA MODE -->
-    <div id="mode-camera" style="display:none;">
-      <div class="input-group">
-        <div class="input-label">Scan Nutrition Label or Barcode</div>
-        <p style="font-size:11px;color:var(--text3);margin-bottom:8px;">Point at the barcode or the Nutrition Facts panel. Good lighting = better results.</p>
-        <div id="camera-preview"><video id="camera-video" autoplay playsinline muted></video></div>
-        <canvas id="photo-canvas"></canvas>
-        <div style="display:flex;gap:10px;margin-top:10px;">
-          <button class="btn btn-secondary" onclick="startCamera()" style="flex:1;font-size:13px;">📷 Open Camera</button>
-          <button class="btn btn-secondary" onclick="capturePhoto()" id="capture-btn" style="flex:1;font-size:13px;display:none;">⚡ Capture</button>
-        </div>
-        <div style="margin-top:8px;">
-          <label style="display:block;width:100%;">
-            <div class="btn btn-secondary" style="font-size:13px;cursor:pointer;">📁 Upload Photo</div>
-            <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(this)">
-          </label>
-        </div>
-      </div>
-      <div id="camera-status" style="padding:0 20px;font-size:13px;color:var(--text3);"></div>
     </div>
     <!-- MANUAL MODE -->
     <div id="mode-manual" style="display:none;">
@@ -1207,9 +1215,11 @@ async function init() {
   const wdEl = document.getElementById('workout-date');
   const cdEl = document.getElementById('cardio-date');
   const wtEl = document.getElementById('weight-date');
+  const wlEl = document.getElementById('wellness-date');
   if (wdEl) wdEl.value = today;
   if (cdEl) cdEl.value = today;
   if (wtEl) wtEl.value = today;
+  if (wlEl) wlEl.value = today;
 }
 
 // ===================== SHARE / QR =====================
@@ -1482,9 +1492,11 @@ function showPage(id, btn) {
     const wdEl = document.getElementById('workout-date');
     const cdEl = document.getElementById('cardio-date');
     const wtEl = document.getElementById('weight-date');
+    const wlEl = document.getElementById('wellness-date');
     if (wdEl && !wdEl.value) wdEl.value = today;
     if (cdEl && !cdEl.value) cdEl.value = today;
     if (wtEl && !wtEl.value) wtEl.value = today;
+    if (wlEl && !wlEl.value) wlEl.value = today;
     renderWorkoutLog();
   }
   if (id === 'settings') { buildShareLinks(); if (!state.readOnly) { buildViewLink(); initExportDates(); } }
@@ -1560,6 +1572,27 @@ function renderDashboard() {
     deficitEl.previousElementSibling.textContent = 'Deficit';
   }
 
+  // Miles + weight mini trackers (today only)
+  if (currentPeriod === 'day') {
+    const todayCardio = (state.workouts[todayKey()] || []).filter(w => w.category === 'cardio');
+    const totalMiles = todayCardio.reduce((s,w) => s + (w.distance||0), 0);
+    const totalCardioMins = todayCardio.reduce((s,w) => s + (w.duration||0), 0);
+    const milesEl = document.getElementById('dash-miles-val');
+    const milesSub = document.getElementById('dash-miles-sub');
+    if (milesEl) milesEl.textContent = totalMiles > 0 ? totalMiles.toFixed(2) : '0.00';
+    if (milesSub) {
+      if (totalMiles > 0) milesSub.textContent = `${totalCardioMins} min · ${todayCardio.length} session${todayCardio.length!==1?'s':''}`;
+      else if (totalCardioMins > 0) milesSub.textContent = `${totalCardioMins} min · distance not logged`;
+      else milesSub.textContent = 'No cardio logged';
+    }
+    const todayWeightsArr = state.weights[todayKey()] || [];
+    const latestWt = todayWeightsArr.length ? todayWeightsArr[todayWeightsArr.length-1] : null;
+    const wtEl  = document.getElementById('dash-weight-val');
+    const wtSub = document.getElementById('dash-weight-sub');
+    if (wtEl)  wtEl.textContent  = latestWt ? latestWt.weight + ' lbs' : '—';
+    if (wtSub) wtSub.textContent = latestWt ? (latestWt.timeOfDay || 'logged today') : 'Not logged today';
+  }
+
   // Water mini card
   const dwc = document.getElementById('dashboard-water-card');
   if (currentPeriod === 'day') {
@@ -1600,14 +1633,14 @@ function renderDashboard() {
   if (currentPeriod === 'day' && dfc) {
     const todayWorkouts = state.workouts[todayKey()] || [];
     const todayWeights = state.weights[todayKey()] || [];
-    const wStrength = todayWorkouts.filter(w => w.category === 'strength');
-    const wCardio   = todayWorkouts.filter(w => w.category === 'cardio');
+    const wStrength  = todayWorkouts.filter(w => w.category === 'strength');
+    const wCardio    = todayWorkouts.filter(w => w.category === 'cardio');
+    const wWellness  = todayWorkouts.filter(w => w.category === 'wellness');
     const totalCardioMins  = wCardio.reduce((s,w) => s + (w.duration||0), 0);
     const totalCardioMiles = wCardio.reduce((s,w) => s + (w.distance||0), 0);
     const latestWeight = todayWeights.length ? todayWeights[todayWeights.length-1].weight : null;
     const burned = calcBurnedCals(todayKey());
 
-    // Always show fitness card on dashboard
     let fitnessContent = '';
     if (!todayWorkouts.length && !latestWeight) {
       fitnessContent = `<div style="font-size:12px;color:var(--text3);">No fitness activity logged today. Tap <strong style="color:var(--accent);">Fitness</strong> in the nav to log a workout or weight.</div>`;
@@ -1615,6 +1648,7 @@ function renderDashboard() {
       fitnessContent = `<div style="display:flex;flex-wrap:wrap;gap:12px;">
         ${wStrength.length ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">💪</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${wStrength.length} workout${wStrength.length!==1?'s':''}</div><div style="font-size:10px;color:var(--text3);">${wStrength.map(w=>WORKOUT_TYPE_LABEL[w.type]||w.type).join(', ')}</div></div></div>` : ''}
         ${totalCardioMins ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">🏃</span><div><div style="font-size:13px;font-weight:700;color:var(--text);">${totalCardioMins} min cardio</div><div style="font-size:10px;color:var(--text3);">${totalCardioMiles > 0 ? totalCardioMiles.toFixed(2)+' mi' : 'distance not logged'}</div></div></div>` : ''}
+        ${wWellness.length ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">${wWellness.map(w=>WELLNESS_EMOJI[w.type]||'🧘').join('')}</span><div><div style="font-size:13px;font-weight:700;color:var(--accent4);">${wWellness.map(w=>WELLNESS_LABEL[w.type]||w.type).join(', ')}</div><div style="font-size:10px;color:var(--text3);">${wWellness.map(w=>w.duration?(w.duration+' min'):'').filter(Boolean).join(', ')||'logged today'}</div></div></div>` : ''}
         ${latestWeight ? `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:18px;">⚖️</span><div><div style="font-size:13px;font-weight:700;color:var(--accent4);">${latestWeight} lbs</div><div style="font-size:10px;color:var(--text3);">today's weight</div></div></div>` : ''}
       </div>`;
     }
@@ -1958,16 +1992,22 @@ function renderHistoryDayDetail(key) {
       </div>
       <div class="card-body" style="padding-top:0;">
         ${workoutEntries.map(e => {
-          const isCardio = e.category === 'cardio';
-          const icon = isCardio ? (CARDIO_EMOJI[e.type]||'🏃') : (WORKOUT_TYPE_EMOJI[e.type]||'💪');
-          const label = isCardio ? (CARDIO_LABEL[e.type]||'Cardio') : (WORKOUT_TYPE_LABEL[e.type]||e.type);
+          const isCardio   = e.category === 'cardio';
+          const isWellness = e.category === 'wellness';
+          const icon  = isCardio   ? (CARDIO_EMOJI[e.type]  ||'🏃') :
+                        isWellness ? (WELLNESS_EMOJI[e.type] ||'🧘') :
+                                     (WORKOUT_TYPE_EMOJI[e.type]||'💪');
+          const label = isCardio   ? (CARDIO_LABEL[e.type]  ||'Cardio') :
+                        isWellness ? (WELLNESS_LABEL[e.type] ||e.type) :
+                                     (WORKOUT_TYPE_LABEL[e.type]||e.type);
+          const iconBg = isCardio ? 'rgba(0,184,255,0.1)' : isWellness ? 'rgba(255,209,102,0.1)' : 'rgba(0,229,160,0.1)';
           const meta = [];
           if (e.duration) meta.push(e.duration + ' min');
           if (e.distance) meta.push(e.distance + ' mi');
           if (e.notes) meta.push(e.notes);
           return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
             <div style="display:flex;align-items:center;gap:10px;">
-              <div style="width:34px;height:34px;border-radius:10px;background:${isCardio?'rgba(0,184,255,0.1)':'rgba(0,229,160,0.1)'};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${icon}</div>
+              <div style="width:34px;height:34px;border-radius:10px;background:${iconBg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${icon}</div>
               <div>
                 <div style="font-size:13px;font-weight:700;color:var(--text);">${label}</div>
                 <div style="font-size:11px;color:var(--text3);">${meta.join(' · ')||'—'}</div>
@@ -2416,10 +2456,34 @@ const WORKOUT_TYPE_EMOJI = {
 };
 const CARDIO_LABEL = { run:'Run', walk:'Walk', bike:'Bike', other:'Cardio' };
 const CARDIO_EMOJI = { run:'🏃', walk:'🚶', bike:'🚴', other:'⚡' };
+const WELLNESS_LABEL = { stretch:'Stretching', sauna:'Sauna', steam:'Steam Room', hottub:'Hot Tub' };
+const WELLNESS_EMOJI = { stretch:'🧘', sauna:'🔥', steam:'💨', hottub:'🛁' };
 
 let _selectedWorkoutType = null;
 let _selectedCardioType = 'run';
 let _selectedWeightTime = 'morning';
+let _selectedWellnessType = null;
+
+function selectWellnessType(el) {
+  _selectedWellnessType = el.dataset.wtype;
+  document.querySelectorAll('[data-wtype]').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function logWellness() {
+  if (state.readOnly) return;
+  if (!_selectedWellnessType) { showToast('Select a wellness activity first'); return; }
+  const dur = parseInt(document.getElementById('wellness-duration').value) || 0;
+  const notes = document.getElementById('wellness-notes').value.trim();
+  const dateVal = document.getElementById('wellness-date').value || todayKey();
+  const entry = { id: uid(), category: 'wellness', type: _selectedWellnessType, duration: dur, notes, timestamp: Date.now() };
+  state.workouts[dateVal] = state.workouts[dateVal] || [];
+  state.workouts[dateVal].push(entry);
+  document.getElementById('wellness-duration').value = '';
+  document.getElementById('wellness-notes').value = '';
+  save(); renderWorkoutLog(); renderDashboard();
+  showToast((WELLNESS_EMOJI[_selectedWellnessType]||'🧘') + ' ' + (WELLNESS_LABEL[_selectedWellnessType]||'Wellness') + ' logged!');
+}
 
 function selectWorkoutType(el) {
   _selectedWorkoutType = el.dataset.type;
@@ -2525,14 +2589,16 @@ function renderWorkoutLog() {
   const entries = state.workouts[today] || [];
   const strip = document.getElementById('workout-stats-strip');
   if (strip) {
-    const strCount = entries.filter(e => e.category === 'strength').length;
+    const strCount   = entries.filter(e => e.category === 'strength').length;
     const cardioMins = entries.filter(e => e.category === 'cardio').reduce((s,e) => s+(e.duration||0), 0);
-    const cardioMiles = entries.filter(e => e.category === 'cardio').reduce((s,e) => s+(e.distance||0), 0);
+    const cardioMiles= entries.filter(e => e.category === 'cardio').reduce((s,e) => s+(e.distance||0), 0);
+    const wellEntries= entries.filter(e => e.category === 'wellness');
     const burned = calcBurnedCals(today);
     strip.innerHTML = [
-      strCount ? `<div class="schip" style="border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.08);color:var(--accent);">💪 ${strCount} strength</div>` : '',
-      cardioMins ? `<div class="schip" style="border-color:rgba(0,184,255,0.3);background:rgba(0,184,255,0.08);color:var(--accent2);">🏃 ${cardioMins} min${cardioMiles > 0 ? ' · '+cardioMiles.toFixed(2)+' mi' : ''}</div>` : '',
-      burned ? `<div class="schip" style="border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);color:var(--accent3);">🔥 ~${burned} cal burned</div>` : '',
+      strCount    ? `<div class="schip" style="border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.08);color:var(--accent);">💪 ${strCount} strength</div>` : '',
+      cardioMins  ? `<div class="schip" style="border-color:rgba(0,184,255,0.3);background:rgba(0,184,255,0.08);color:var(--accent2);">🏃 ${cardioMins} min${cardioMiles > 0 ? ' · '+cardioMiles.toFixed(2)+' mi' : ''}</div>` : '',
+      wellEntries.length ? `<div class="schip" style="border-color:rgba(255,209,102,0.3);background:rgba(255,209,102,0.08);color:var(--accent4);">${wellEntries.map(w=>WELLNESS_EMOJI[w.type]||'🧘').join('')} ${wellEntries.map(w=>WELLNESS_LABEL[w.type]||w.type).join(', ')}</div>` : '',
+      burned      ? `<div class="schip" style="border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);color:var(--accent3);">🔥 ~${burned} cal burned</div>` : '',
     ].filter(Boolean).join('');
   }
   const ll = document.getElementById('workout-log-list');
@@ -2542,24 +2608,32 @@ function renderWorkoutLog() {
     return;
   }
   ll.innerHTML = entries.map(e => {
-    const isCardio = e.category === 'cardio';
-    const icon = isCardio ? (CARDIO_EMOJI[e.type]||'🏃') : (WORKOUT_TYPE_EMOJI[e.type]||'💪');
-    const label = isCardio ? (CARDIO_LABEL[e.type]||'Cardio') : (WORKOUT_TYPE_LABEL[e.type]||e.type);
+    const isCardio   = e.category === 'cardio';
+    const isWellness = e.category === 'wellness';
+    const icon  = isCardio   ? (CARDIO_EMOJI[e.type]  ||'🏃') :
+                  isWellness ? (WELLNESS_EMOJI[e.type] ||'🧘') :
+                               (WORKOUT_TYPE_EMOJI[e.type]||'💪');
+    const label = isCardio   ? (CARDIO_LABEL[e.type]  ||'Cardio') :
+                  isWellness ? (WELLNESS_LABEL[e.type] ||e.type) :
+                               (WORKOUT_TYPE_LABEL[e.type]||e.type);
+    const iconBg = isCardio ? 'rgba(0,184,255,0.1)' : isWellness ? 'rgba(255,209,102,0.1)' : 'rgba(0,229,160,0.1)';
     const meta = [];
     if (e.duration) meta.push(e.duration + ' min');
     if (e.distance) meta.push(e.distance + ' mi');
-    if (e.notes) meta.push(e.notes);
-    const calEst = isCardio
-      ? (e.type==='run' ? (e.distance>0 ? Math.round(e.distance*100) : Math.round((e.duration||0)*10)) : e.type==='walk' ? (e.distance>0 ? Math.round(e.distance*80) : Math.round((e.duration||0)*5)) : Math.round((e.duration||0)*8))
+    if (e.notes)    meta.push(e.notes);
+    const calEst = isWellness ? 0 : isCardio
+      ? (e.type==='run'  ? (e.distance>0 ? Math.round(e.distance*100) : Math.round((e.duration||0)*10)) :
+         e.type==='walk' ? (e.distance>0 ? Math.round(e.distance*80)  : Math.round((e.duration||0)*5))  :
+         Math.round((e.duration||0)*8))
       : Math.round((e.duration||45)*6);
     return `<div class="workout-entry">
-      <div class="workout-icon ${isCardio?'cardio':''}">${icon}</div>
+      <div class="workout-icon" style="background:${iconBg};">${icon}</div>
       <div class="workout-info">
         <div class="workout-title">${label}</div>
         <div class="workout-meta">${meta.join(' · ')||'No details'}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        <div class="workout-cal">~${calEst} cal</div>
+        ${calEst ? `<div class="workout-cal">~${calEst} cal</div>` : `<div class="workout-cal" style="color:var(--accent4);">${isWellness ? (WELLNESS_EMOJI[e.type]||'🧘') : ''}</div>`}
         <div style="display:flex;gap:8px;">
           <span style="font-size:14px;cursor:pointer;color:var(--text3);" onclick="openEditWorkout('${today}','${e.id}')">✏️</span>
           <span style="font-size:14px;cursor:pointer;color:var(--text3);" onclick="deleteWorkoutEntry('${today}','${e.id}')">✕</span>
@@ -2669,7 +2743,6 @@ function clearAllData() {
 
 // ===================== ADD FOOD =====================
 let searchTimeout = null;
-let cameraStream = null;
 
 function openAddFood() {
   if (state.readOnly) return;
@@ -2683,11 +2756,11 @@ function openAddFood() {
 }
 
 function setAddMode(mode) {
-  ['search','camera','manual','supplement'].forEach(m => {
+  ['search','manual','supplement'].forEach(m => {
     document.getElementById('mode-' + m).style.display = m === mode ? '' : 'none';
-    document.getElementById('tab-' + m).classList.toggle('active', m === mode);
+    const tab = document.getElementById('tab-' + m);
+    if (tab) tab.classList.toggle('active', m === mode);
   });
-  if (mode !== 'camera') stopCamera();
   if (mode === 'manual') { document.getElementById('food-form').style.display = 'none'; }
   if (mode === 'supplement') { document.getElementById('food-form').style.display = 'none'; }
 }
@@ -3160,7 +3233,7 @@ function openEditNutrients() {
     <div class="nutrient-edit-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-bottom:8px;">
       ${sec.keys.map(k => `<div class="nutrient-edit-item">
         <div class="input-label" style="margin-bottom:4px;">${NUTRIENTS_LABEL[k]} <span style="color:var(--text3);font-weight:400;">(${NUTRIENTS_UNIT[k]})</span></div>
-        <input class="input-field" type="number" id="ne-${k}" value="${bn[k]||0}" min="0" style="font-size:14px;padding:10px 12px;">
+        <input class="input-field nu-input" type="number" id="ne-${k}" value="${bn[k]||0}" placeholder="0" min="0" style="font-size:14px;padding:10px 12px;" onfocus="nuFocus(this)" onblur="nuBlur(this)">
       </div>`).join('')}
     </div>`).join('') + `
     <div style="padding:0 20px;margin-top:14px;margin-bottom:20px;">
@@ -3319,7 +3392,7 @@ function openEditModal(entryId) {
         ${sec.keys.map(k => `
           <div>
             <div class="input-label" style="margin-bottom:4px;">${NUTRIENTS_LABEL[k]} <span style="color:var(--text3);font-weight:400;">(${NUTRIENTS_UNIT[k]})</span></div>
-            <input class="input-field" type="number" id="ee-${k}" value="${+(bn[k]||0).toFixed(2)}" min="0" style="font-size:14px;padding:10px 12px;">
+            <input class="input-field nu-input" type="number" id="ee-${k}" value="${+(bn[k]||0).toFixed(2)}" placeholder="0" min="0" style="font-size:14px;padding:10px 12px;" onfocus="nuFocus(this)" onblur="nuBlur(this)">
           </div>`).join('')}
       </div>`).join('')}
 
@@ -3393,190 +3466,18 @@ function deleteEntry(entryId) {
   showToast('🗑️ Entry deleted');
 }
 
-// ===================== CAMERA =====================
-function startCamera() {
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(stream => {
-      cameraStream = stream;
-      const video = document.getElementById('camera-video');
-      video.srcObject = stream;
-      document.getElementById('camera-preview').style.display = '';
-      document.getElementById('capture-btn').style.display = '';
-      document.getElementById('camera-status').textContent = 'Point camera at nutrition label';
-    })
-    .catch(() => { document.getElementById('camera-status').textContent = 'Camera not available. Try uploading a photo.'; });
+// ===================== NUTRIENT INPUT HELPERS =====================
+// Clears zero on focus so user can type directly; restores 0 on blur if empty
+function nuFocus(el) {
+  if (el.value === '0' || el.value === '0.00') el.value = '';
 }
-
-function stopCamera() {
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-  document.getElementById('camera-preview').style.display = 'none';
-  document.getElementById('capture-btn').style.display = 'none';
-}
-
-function capturePhoto() {
-  const video = document.getElementById('camera-video');
-  const canvas = document.getElementById('photo-canvas');
-  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  stopCamera();
-  analyzePhoto(canvas.toDataURL('image/jpeg', 0.8).split(',')[1]);
-}
-
-function handlePhotoUpload(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => analyzePhoto(e.target.result.split(',')[1]);
-  reader.readAsDataURL(file);
-}
-
-async function analyzePhoto(base64) {
-  const statusEl = document.getElementById('camera-status');
-  statusEl.textContent = '🔍 Reading nutrition label…';
-
-  // Step 1: Try barcode detection first (works on iOS 17+ and modern Chrome)
-  const barcodeFound = await tryBarcodeDetection(base64);
-  if (barcodeFound) return;
-
-  // Step 2: Use OCR.space free API to extract text, then parse nutrition facts
-  await tryOCRParse(base64);
-}
-
-async function tryBarcodeDetection(base64) {
-  try {
-    if (!('BarcodeDetector' in window)) return false;
-    const img = await base64ToImageBitmap(base64);
-    const detector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code'] });
-    const barcodes = await detector.detect(img);
-    if (!barcodes.length) return false;
-    const barcode = barcodes[0].rawValue;
-    document.getElementById('camera-status').textContent = `📦 Barcode found: ${barcode}. Looking up…`;
-    // Query Open Food Facts by barcode
-    const resp = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-    const data = await resp.json();
-    if (data.status !== 1 || !data.product) {
-      document.getElementById('camera-status').textContent = '⚠️ Barcode found but product not in database. Try OCR scan.';
-      return true;
-    }
-    const p = data.product; const nm = p.nutriments || {};
-    const f = {
-      name: p.product_name || `Product ${barcode}`,
-      calories: nm['energy-kcal_serving'] || nm['energy-kcal_100g'] || 0,
-      totalFat: nm['fat_serving'] || nm['fat_100g'] || 0,
-      saturatedFat: nm['saturated-fat_serving'] || nm['saturated-fat_100g'] || 0,
-      transFat: nm['trans-fat_serving'] || 0,
-      polyunsaturatedFat: nm['polyunsaturated-fat_serving'] || nm['polyunsaturated-fat_100g'] || 0,
-      monounsaturatedFat: nm['monounsaturated-fat_serving'] || nm['monounsaturated-fat_100g'] || 0,
-      cholesterol: (nm['cholesterol_serving'] || nm['cholesterol_100g'] || 0) * 1000,
-      sodium: (nm['sodium_serving'] || nm['sodium_100g'] || 0) * 1000,
-      totalCarbs: nm['carbohydrates_serving'] || nm['carbohydrates_100g'] || 0,
-      dietaryFiber: nm['fiber_serving'] || nm['fiber_100g'] || 0,
-      totalSugars: nm['sugars_serving'] || nm['sugars_100g'] || 0,
-      addedSugars: nm['added-sugars_serving'] || 0,
-      protein: nm['proteins_serving'] || nm['proteins_100g'] || 0,
-      vitaminD: 0, calcium: (nm['calcium_serving'] || nm['calcium_100g'] || 0) * 1000,
-      iron: (nm['iron_serving'] || nm['iron_100g'] || 0) * 1000,
-      potassium: (nm['potassium_serving'] || nm['potassium_100g'] || 0) * 1000,
-      vitaminA: 0, vitaminC: (nm['vitamin-c_serving'] || nm['vitamin-c_100g'] || 0) * 1000,
-      vitaminB12: 0, magnesium: 0, zinc: 0
-    };
-    document.getElementById('camera-status').textContent = `✅ Found: ${f.name}`;
-    state.currentFood = { name: f.name, emoji: randEmoji(), baseNutrients: f };
-    showFoodForm(); populateFormPreview();
-    return true;
-  } catch(e) { return false; }
-}
-
-function base64ToImageBitmap(base64) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => createImageBitmap(img).then(res).catch(rej);
-    img.onerror = rej;
-    img.src = 'data:image/jpeg;base64,' + base64;
-  });
-}
-
-async function tryOCRParse(base64) {
-  const statusEl = document.getElementById('camera-status');
-  statusEl.textContent = '🔤 Reading label text…';
-  try {
-    // OCR.space free tier — no key needed for basic use
-    const formData = new FormData();
-    formData.append('base64Image', 'data:image/jpeg;base64,' + base64);
-    formData.append('language', 'eng');
-    formData.append('isOverlayRequired', 'false');
-    formData.append('OCREngine', '2');
-    formData.append('scale', 'true');
-
-    const resp = await fetch('https://api.ocr.space/parse/image', {
-      method: 'POST',
-      headers: { 'apikey': 'helloworld' }, // OCR.space free demo key
-      body: formData
-    });
-    const data = await resp.json();
-    const text = (data.ParsedResults || []).map(r => r.ParsedText || '').join('\n');
-    if (!text.trim()) throw new Error('No text found');
-
-    const parsed = parseNutritionText(text);
-    if (!parsed.calories && !parsed.protein && !parsed.totalFat) {
-      statusEl.textContent = '⚠️ Could not read label. Try Manual Entry or better lighting.';
-      return;
-    }
-    const name = extractProductName(text) || 'Scanned Food';
-    statusEl.textContent = `✅ Label read: ${name}`;
-    state.currentFood = { name, emoji: randEmoji(), baseNutrients: parsed };
-    showFoodForm(); populateFormPreview();
-  } catch(e) {
-    document.getElementById('camera-status').textContent = '❌ Could not read label. Try Manual Entry or ensure good lighting.';
-  }
-}
-
-function parseNutritionText(text) {
-  const n = {}; NUTRIENTS_KEY.forEach(k => n[k] = 0);
-  const t = text.replace(/\r/g, '\n');
-
-  function extract(patterns) {
-    for (const pat of patterns) {
-      const m = t.match(pat);
-      if (m) return parseFloat(m[1].replace(/,/g, '')) || 0;
-    }
-    return 0;
-  }
-
-  n.calories    = extract([/calories[\s:]*(\d[\d,]*)/i, /energy[\s:]*(\d[\d,]*)\s*kcal/i]);
-  n.totalFat    = extract([/total\s*fat[\s:]*(\d[\d,.]*)\s*g/i, /fat[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.saturatedFat= extract([/saturated\s*fat[\s:]*(\d[\d,.]*)/i, /sat\.?\s*fat[\s:]*(\d[\d,.]*)/i]);
-  n.transFat    = extract([/trans\s*fat[\s:]*(\d[\d,.]*)/i]);
-  n.cholesterol = extract([/cholesterol[\s:]*(\d[\d,]*)\s*mg/i]);
-  n.sodium      = extract([/sodium[\s:]*(\d[\d,]*)\s*mg/i]);
-  n.totalCarbs  = extract([/total\s*carb\w*[\s:]*(\d[\d,.]*)\s*g/i, /carbohydrate\w*[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.dietaryFiber= extract([/dietary\s*fiber[\s:]*(\d[\d,.]*)\s*g/i, /fiber[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.totalSugars = extract([/total\s*sugars?[\s:]*(\d[\d,.]*)\s*g/i, /sugars?[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.addedSugars = extract([/added\s*sugars?[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.protein     = extract([/protein[\s:]*(\d[\d,.]*)\s*g/i]);
-  n.vitaminD    = extract([/vitamin\s*d[\s:]*(\d[\d,.]*)\s*mcg/i, /vitamin\s*d[\s:]*(\d[\d,.]*)/i]);
-  n.calcium     = extract([/calcium[\s:]*(\d[\d,]*)\s*mg/i, /calcium[\s:]*(\d[\d,.]*)/i]);
-  n.iron        = extract([/iron[\s:]*(\d[\d,.]*)\s*mg/i, /iron[\s:]*(\d[\d,.]*)/i]);
-  n.potassium   = extract([/potassium[\s:]*(\d[\d,]*)\s*mg/i, /potassium[\s:]*(\d[\d,.]*)/i]);
-  n.vitaminC    = extract([/vitamin\s*c[\s:]*(\d[\d,.]*)\s*mg/i]);
-  n.magnesium   = extract([/magnesium[\s:]*(\d[\d,]*)\s*mg/i]);
-  n.zinc        = extract([/zinc[\s:]*(\d[\d,.]*)\s*mg/i]);
-  return n;
-}
-
-function extractProductName(text) {
-  // Try to find a product name from the first non-"Nutrition Facts" line
-  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 2 && l.length < 60);
-  for (const line of lines) {
-    if (/nutrition facts|serving|calories|amount|daily value|%dv/i.test(line)) continue;
-    if (/^\d/.test(line)) continue;
-    return line.replace(/[^a-zA-Z0-9\s\-'&]/g, '').trim() || null;
-  }
-  return null;
+function nuBlur(el) {
+  if (el.value === '' || el.value === null) el.value = '0';
 }
 
 // ===================== MODAL =====================
 function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); if (id === 'modal-add') stopCamera(); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.modal-overlay').forEach(m => {
   m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
 });
@@ -3740,14 +3641,19 @@ function openEditWorkout(dateKey, id) {
   if (state.readOnly) return;
   const entry = (state.workouts[dateKey] || []).find(e => e.id === id);
   if (!entry) return;
-  const isCardio = entry.category === 'cardio';
+  const isCardio   = entry.category === 'cardio';
+  const isWellness = entry.category === 'wellness';
+  const icon  = isCardio   ? (CARDIO_EMOJI[entry.type]  ||'🏃') :
+                isWellness ? (WELLNESS_EMOJI[entry.type] ||'🧘') :
+                             (WORKOUT_TYPE_EMOJI[entry.type]||'💪');
+  const label = isCardio   ? (CARDIO_LABEL[entry.type]  ||'Cardio') :
+                isWellness ? (WELLNESS_LABEL[entry.type] ||entry.type) :
+                             (WORKOUT_TYPE_LABEL[entry.type]||entry.type);
   const body = document.getElementById('edit-form-body');
   body.innerHTML = `
     <div class="input-group">
       <div class="input-label">Type</div>
-      <div style="font-size:14px;font-weight:700;color:var(--accent);padding:4px 0;">
-        ${isCardio ? (CARDIO_EMOJI[entry.type]||'🏃') + ' ' + (CARDIO_LABEL[entry.type]||'Cardio') : (WORKOUT_TYPE_EMOJI[entry.type]||'💪') + ' ' + (WORKOUT_TYPE_LABEL[entry.type]||entry.type)}
-      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--accent);padding:4px 0;">${icon} ${label}</div>
     </div>
     <div class="input-group">
       <div class="input-label">Duration (min)</div>
