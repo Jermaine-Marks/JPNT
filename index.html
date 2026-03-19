@@ -386,6 +386,57 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .weight-chart-bar { width: 28px; border-radius: 4px 4px 0 0; background: rgba(255,209,102,0.5); min-height: 4px; transition: height 0.5s ease; }
   .weight-chart-label { font-size: 9px; color: var(--text3); margin-top: 3px; font-weight: 600; }
   .weight-chart-val { font-size: 9px; color: var(--accent4); margin-bottom: 2px; font-family: 'DM Mono', monospace; }
+
+  /* ── TRACK PAGE ──────────────────────────────────────────── */
+  .tracker-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 14px; }
+  .tracker-btn {
+    border-radius: var(--radius); padding: 14px 8px 10px; text-align: center;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+    box-shadow: var(--sh, 0 2px 10px rgba(0,0,0,.2)); transition: all .18s;
+    display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative;
+  }
+  .tracker-btn:active { transform: scale(.94); }
+  .tracker-btn.done-once { border-color: var(--accent); background: rgba(0,229,160,.08); }
+  .tracker-btn .t-icon  { font-size: 26px; line-height: 1; }
+  .tracker-btn .t-label { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .tracker-btn .t-count { font-size: 10px; color: var(--accent); font-weight: 700; }
+  .tracker-btn .t-check { position:absolute;top:6px;right:6px;font-size:13px; }
+  .tracker-add-btn {
+    border-radius: var(--radius); padding: 14px 8px; text-align:center;
+    cursor: pointer; border: 2px dashed var(--border); background: transparent;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    color: var(--text3); font-size: 11px; font-weight: 700; transition: all .18s;
+  }
+  .tracker-add-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  /* MOOD */
+  .mood-level-row { display:flex; gap:8px; justify-content:center; margin-bottom:14px; }
+  .mood-level-btn {
+    width: 50px; height: 56px; border-radius: var(--radius-sm);
+    border: 2px solid var(--border); background: var(--surface);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 3px; cursor:pointer; transition: all .18s;
+  }
+  .mood-level-btn .ml-emoji { font-size: 20px; line-height:1; }
+  .mood-level-btn .ml-label { font-size: 8px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.3px; }
+  .mood-level-btn.active { border-color: var(--accent); background: rgba(0,229,160,.1); }
+  .mood-tag-row { display:flex; flex-wrap:wrap; gap:6px; padding:0 20px; margin-bottom:13px; }
+  .mood-tag {
+    padding: 6px 12px; border-radius: 18px; font-size: 12px; font-weight:600;
+    cursor:pointer; border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text2); transition: all .16s;
+  }
+  .mood-tag.on { background: rgba(0,229,160,.12); border-color: var(--accent); color: var(--accent); }
+  .mood-entry-strip {
+    display:flex; align-items:center; gap:10px; padding:10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mood-entry-strip:last-child { border-bottom:none; }
+  .mood-face { font-size: 24px; flex-shrink:0; }
+  .mood-info { flex:1; min-width:0; }
+  .mood-title { font-size:13px; font-weight:700; color:var(--text); }
+  .mood-meta  { font-size:11px; color:var(--text3); margin-top:2px; }
+  .mood-time  { font-size:11px; color:var(--text3); flex-shrink:0; font-weight:600; }
 </style>
 </head>
 <body>
@@ -451,6 +502,8 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       <div id="dashboard-water-card"></div>
       <div id="dashboard-bathroom-card"></div>
       <div id="dashboard-fitness-card"></div>
+      <div id="dashboard-track-card"></div>
+      <div id="dashboard-mood-card"></div>
       <div id="deficiencies-wrap"></div>
       <div class="card">
         <div class="card-header"><div class="card-title">Macronutrients</div></div>
@@ -891,6 +944,100 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       </div><!-- /fitness-weight-view -->
     </div><!-- /page-fitness -->
 
+
+    <!-- TRACK PAGE -->
+    <div class="page" id="page-track">
+      <div class="tab-row">
+        <div class="tab active" id="ttab-custom" onclick="switchTrackTab('custom',this)">📋 My Trackers</div>
+        <div class="tab" id="ttab-mood" onclick="switchTrackTab('mood',this)">😊 Mood</div>
+      </div>
+
+      <!-- CUSTOM TRACKERS SUB-TAB -->
+      <div id="track-custom-view">
+        <div id="tracker-grid-wrap" class="tracker-grid"></div>
+        <div class="section-label">Manage Trackers</div>
+        <div class="card">
+          <div class="card-body" id="tracker-manage-list" style="padding-top:14px;"></div>
+        </div>
+        <div style="height:80px;"></div>
+      </div>
+
+      <!-- MOOD SUB-TAB -->
+      <div id="track-mood-view" style="display:none;">
+        <div id="mood-today-strip" style="margin-bottom:12px;"></div>
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-header"><div class="card-title">😊 Log How You Feel</div></div>
+          <div class="card-body" style="padding-top:6px;">
+            <div class="input-label" style="padding:0;margin-bottom:8px;">Overall Feeling</div>
+            <div class="mood-level-row" id="mood-level-btns">
+              <div class="mood-level-btn" data-lvl="1" onclick="selMoodLevel(this)"><div class="ml-emoji">😫</div><div class="ml-label">Rough</div></div>
+              <div class="mood-level-btn" data-lvl="2" onclick="selMoodLevel(this)"><div class="ml-emoji">😕</div><div class="ml-label">Poor</div></div>
+              <div class="mood-level-btn" data-lvl="3" onclick="selMoodLevel(this)"><div class="ml-emoji">😐</div><div class="ml-label">OK</div></div>
+              <div class="mood-level-btn" data-lvl="4" onclick="selMoodLevel(this)"><div class="ml-emoji">🙂</div><div class="ml-label">Good</div></div>
+              <div class="mood-level-btn" data-lvl="5" onclick="selMoodLevel(this)"><div class="ml-emoji">😄</div><div class="ml-label">Great</div></div>
+            </div>
+            <div class="input-label" style="padding:0 20px;margin-bottom:6px;">Energy Level</div>
+            <div class="mood-level-row" id="mood-energy-btns">
+              <div class="mood-level-btn" data-lvl="1" onclick="selMoodEnergy(this)"><div class="ml-emoji">🪫</div><div class="ml-label">Drained</div></div>
+              <div class="mood-level-btn" data-lvl="2" onclick="selMoodEnergy(this)"><div class="ml-emoji">😴</div><div class="ml-label">Low</div></div>
+              <div class="mood-level-btn" data-lvl="3" onclick="selMoodEnergy(this)"><div class="ml-emoji">⚡</div><div class="ml-label">Moderate</div></div>
+              <div class="mood-level-btn" data-lvl="4" onclick="selMoodEnergy(this)"><div class="ml-emoji">🔋</div><div class="ml-label">Good</div></div>
+              <div class="mood-level-btn" data-lvl="5" onclick="selMoodEnergy(this)"><div class="ml-emoji">🚀</div><div class="ml-label">High</div></div>
+            </div>
+            <div class="input-label" style="padding:0 20px;margin-bottom:6px;">Tags (select all that apply)</div>
+            <div class="mood-tag-row" id="mood-tags">
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Energized</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Focused</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Motivated</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Calm</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Happy</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Good</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Well-Rested</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Tired</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Sluggish</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Exhausted</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Hit a Wall</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Hungry</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Need Recovery</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Sore</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Stressed</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Anxious</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Sick</div>
+              <div class="mood-tag" onclick="this.classList.toggle('on')">Poor</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-bottom:12px;">
+              <div>
+                <div class="input-label" style="margin-bottom:5px;">Time of Day</div>
+                <select class="input-field" id="mood-time-label" style="font-size:13px;padding:10px 12px;">
+                  <option value="Woke Up">🌅 Woke Up</option>
+                  <option value="Morning">☀️ Morning</option>
+                  <option value="Midday" selected>🕛 Midday</option>
+                  <option value="Afternoon">🌤 Afternoon</option>
+                  <option value="Evening">🌆 Evening</option>
+                  <option value="Bedtime">🌙 Bedtime</option>
+                  <option value="Custom">⏰ Custom time</option>
+                </select>
+              </div>
+              <div>
+                <div class="input-label" style="margin-bottom:5px;">Actual Time</div>
+                <input class="input-field" type="time" id="mood-time-val" style="font-size:13px;padding:10px 12px;">
+              </div>
+            </div>
+            <div style="padding:0 20px;margin-bottom:12px;">
+              <div class="input-label" style="margin-bottom:5px;">Note (optional)</div>
+              <input class="input-field" type="text" id="mood-note" placeholder="e.g. Felt a crash around 3pm, needed coffee...">
+            </div>
+            <div style="padding:0 20px;margin-bottom:16px;">
+              <button class="btn btn-primary" onclick="logMood()">😊 Save Mood Log</button>
+            </div>
+          </div>
+        </div>
+        <div class="section-label">Today's Mood Log</div>
+        <div class="card"><div class="card-body" id="mood-log-list" style="padding-top:6px;"><div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.</div></div></div></div>
+        <div style="height:80px;"></div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 
   <!-- NAV -->
@@ -914,6 +1061,10 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     <button class="nav-btn" onclick="showPage('fitness',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v16M18 4v16M3 8h3M15 8h3M3 16h3M15 16h3M9 8h6M9 16h6"/></svg>
       Fitness
+    </button>
+    <button class="nav-btn" onclick="showPage('track',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Track
     </button>
     <button class="nav-btn" onclick="showPage('settings',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1100,8 +1251,11 @@ let state = {
   savedFoods: [],
   water: {},
   bathroom: {},
-  workouts: {},   // dateKey -> [{id, type, cardioType, duration, distance, timestamp}]
-  weights: {},    // dateKey -> [{id, weight, timestamp}]
+  workouts: {},
+  weights: {},
+  trackerDefs: [],
+  trackerLogs: {},
+  moodLogs: {},
   currentFood: null,
   portionMultiplier: 1.0,
   currentPeriod: 'day',
@@ -1136,7 +1290,7 @@ function scheduleSave() {
 
 function doSave() {
   if (state.readOnly) return;
-  const payload = JSON.stringify({ goals: state.goals, log: state.log, savedFoods: state.savedFoods, water: state.water, bathroom: state.bathroom, workouts: state.workouts, weights: state.weights });
+  const payload = JSON.stringify({ goals: state.goals, log: state.log, savedFoods: state.savedFoods, water: state.water, bathroom: state.bathroom, workouts: state.workouts, weights: state.weights, trackerDefs: state.trackerDefs, trackerLogs: state.trackerLogs, moodLogs: state.moodLogs });
   try {
     localStorage.setItem('jpnt_state_v2', payload);
     setSyncStatus('synced');
@@ -1179,6 +1333,9 @@ function applyLoadedData(d) {
   if (d.bathroom) state.bathroom = d.bathroom;
   if (d.workouts) state.workouts = d.workouts;
   if (d.weights) state.weights = d.weights;
+  if (d.trackerDefs) state.trackerDefs = d.trackerDefs;
+  if (d.trackerLogs) state.trackerLogs = d.trackerLogs;
+  if (d.moodLogs) state.moodLogs = d.moodLogs;
   // Sync goal inputs
   ['calories','protein','carbs','fat','sodium','fiber','water'].forEach(k => {
     const el = document.getElementById('goal-' + k);
@@ -1209,6 +1366,9 @@ async function init() {
   renderBathroom();
   buildShareLinks();
   setSyncStatus('synced');
+
+  // Init Track page
+  renderTrackerGrid();
 
   // Pre-fill fitness date fields
   const today = todayKey();
@@ -1499,6 +1659,7 @@ function showPage(id, btn) {
     if (wlEl && !wlEl.value) wlEl.value = today;
     renderWorkoutLog();
   }
+  if (id === 'track') { renderTrackerGrid(); renderMoodLog(); initMoodTime(); }
   if (id === 'settings') { buildShareLinks(); if (!state.readOnly) { buildViewLink(); initExportDates(); } }
   const fab = document.getElementById('add-fab');
   if (!state.readOnly) fab.style.display = (id === 'log' || id === 'dashboard') ? '' : 'none';
@@ -1661,6 +1822,9 @@ function renderDashboard() {
       <div class="card-body" style="padding-top:0;">${fitnessContent}</div>
     </div>`;
   } else if (dfc) { dfc.innerHTML = ''; }
+
+  // Track + Mood dashboard cards
+  renderDashTrackCard();
   const iw = document.getElementById('insights-wrap');
   iw.innerHTML = '';
   if (cal === 0 && currentPeriod === 'day') {
@@ -1830,9 +1994,11 @@ function renderHistory() {
     const hasFood = (state.log[key] || []).length > 0;
     const hasWater = (state.water[key] || []).length > 0;
     const hasBath = (state.bathroom[key] || []).length > 0;
-    const hasWorkout = (state.workouts[key] || []).length > 0;
-    const hasWeight = (state.weights[key] || []).length > 0;
-    const hasData = hasFood || hasWater || hasBath || hasWorkout || hasWeight;
+    const hasWorkout  = (state.workouts[key] || []).length > 0;
+    const hasWeight   = (state.weights[key] || []).length > 0;
+    const hasTracker  = (state.trackerLogs[key] || []).length > 0;
+    const hasMood     = (state.moodLogs[key] || []).length > 0;
+    const hasData = hasFood || hasWater || hasBath || hasWorkout || hasWeight || hasTracker || hasMood;
     const isToday = key === today;
     const isFuture = new Date(m.getFullYear(), m.getMonth(), d) > todayDate;
     const isSelected = key === historySelectedDay;
@@ -1864,7 +2030,9 @@ function renderHistoryDayDetail(key) {
   const weightEntries  = state.weights[key] || [];
   const dd = document.getElementById('history-day-detail');
 
-  if (!entries.length && !waterEntries.length && !bathEntries.length && !workoutEntries.length && !weightEntries.length) {
+  const trackerEntries = state.trackerLogs[key] || [];
+  const moodEntries     = state.moodLogs[key] || [];
+  if (!entries.length && !waterEntries.length && !bathEntries.length && !workoutEntries.length && !weightEntries.length && !trackerEntries.length && !moodEntries.length) {
     dd.innerHTML = `<div class="empty-state" style="padding:24px 0;"><div class="empty-state-icon">🍽️</div><div class="empty-state-text">Nothing logged on this day.</div></div>`;
     return;
   }
@@ -2042,6 +2210,9 @@ function renderHistoryDayDetail(key) {
       </div>
     </div>`;
   }
+
+  // Track + Mood cards
+  html += renderTrackHistoryCards(key);
 
   dd.innerHTML = html;
 }
@@ -2726,6 +2897,7 @@ function clearTodayData() {
     const today = todayKey();
     delete state.log[today]; delete state.water[today]; delete state.bathroom[today];
     delete state.workouts[today]; delete state.weights[today];
+    delete state.trackerLogs[today]; delete state.moodLogs[today];
     save(); renderDashboard(); renderLog(); renderWater(); renderBathroom(); renderWorkoutLog();
     showToast("Today's log cleared");
   }
@@ -2736,6 +2908,7 @@ function clearAllData() {
   if (confirm('Clear ALL data? This cannot be undone.')) {
     state.log = {}; state.savedFoods = []; state.water = {}; state.bathroom = {};
     state.workouts = {}; state.weights = {};
+    state.trackerLogs = {}; state.moodLogs = {};
     save(); renderDashboard(); renderLog(); renderHistory(); renderWater(); renderBathroom(); renderWorkoutLog();
     showToast('All data cleared');
   }
@@ -3755,8 +3928,444 @@ function saveEditWeight(oldDateKey, id) {
   showToast('⚖️ Weight entry updated');
 }
 
+
+// ══════════════════════════════════════════════════
+//  TRACK PAGE — CUSTOM TRACKERS + MOOD
+// ══════════════════════════════════════════════════
+
+let _trackTab = 'custom';
+let _ntType = 'multi';
+let _pendingTrackerDefId = null;
+let _moodLevel = 0;
+let _moodEnergy = 0;
+
+function switchTrackTab(tab, el) {
+  _trackTab = tab;
+  document.querySelectorAll('#page-track .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('track-custom-view').style.display = tab === 'custom' ? '' : 'none';
+  document.getElementById('track-mood-view').style.display = tab === 'mood' ? '' : 'none';
+  if (tab === 'custom') renderTrackerGrid();
+  if (tab === 'mood') { renderMoodLog(); initMoodTime(); }
+}
+
+// ── CUSTOM TRACKERS ─────────────────────────────────
+function selectTrackerType(t) {
+  _ntType = t;
+  document.getElementById('nt-type-once').classList.toggle('active', t === 'once');
+  document.getElementById('nt-type-multi').classList.toggle('active', t === 'multi');
+}
+
+function openNewTracker() {
+  _ntType = 'multi';
+  document.getElementById('nt-emoji').value = '';
+  document.getElementById('nt-name').value = '';
+  selectTrackerType('multi');
+  openModal('modal-new-tracker');
+}
+
+function saveNewTracker() {
+  const emoji = document.getElementById('nt-emoji').value.trim() || '📌';
+  const name  = document.getElementById('nt-name').value.trim();
+  if (!name) { showToast('Enter a tracker name'); return; }
+  const def = { id: uid(), name, emoji, logType: _ntType };
+  state.trackerDefs.push(def);
+  save();
+  closeModal('modal-new-tracker');
+  renderTrackerGrid();
+  renderTrackerManage();
+  showToast(emoji + ' ' + name + ' tracker added!');
+}
+
+function deleteTracker(defId) {
+  if (!confirm('Delete this tracker and all its logs?')) return;
+  state.trackerDefs = state.trackerDefs.filter(d => d.id !== defId);
+  // Clean logs
+  Object.keys(state.trackerLogs).forEach(dk => {
+    state.trackerLogs[dk] = (state.trackerLogs[dk] || []).filter(l => l.defId !== defId);
+  });
+  save();
+  renderTrackerGrid();
+  renderTrackerManage();
+}
+
+function tapTracker(defId) {
+  if (state.readOnly) return;
+  const def = state.trackerDefs.find(d => d.id === defId);
+  if (!def) return;
+  const today = todayKey();
+  const todayLogs = state.trackerLogs[today] || [];
+  const alreadyDone = todayLogs.some(l => l.defId === defId);
+
+  if (def.logType === 'once') {
+    if (alreadyDone) {
+      // toggle off
+      state.trackerLogs[today] = todayLogs.filter(l => l.defId !== defId);
+      save(); renderTrackerGrid(); renderDashboard();
+      showToast('↩️ ' + def.name + ' unchecked');
+    } else {
+      state.trackerLogs[today] = [...todayLogs, { id: uid(), defId, timestamp: Date.now(), note: '' }];
+      save(); renderTrackerGrid(); renderDashboard();
+      showToast('✅ ' + def.name + ' logged!');
+    }
+  } else {
+    // multi — open note modal
+    _pendingTrackerDefId = defId;
+    document.getElementById('log-tracker-title').textContent = def.emoji + ' ' + def.name;
+    document.getElementById('log-tracker-note').value = '';
+    const now = new Date();
+    document.getElementById('log-tracker-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    openModal('modal-log-tracker');
+  }
+}
+
+function confirmLogTracker() {
+  if (!_pendingTrackerDefId) return;
+  const today = todayKey();
+  const note  = document.getElementById('log-tracker-note').value.trim();
+  const timeV = document.getElementById('log-tracker-time').value;
+  const [hh, mm] = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
+  const d = new Date(); const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
+  state.trackerLogs[today] = [...(state.trackerLogs[today] || []), { id: uid(), defId: _pendingTrackerDefId, timestamp: ts, note }];
+  save();
+  closeModal('modal-log-tracker');
+  renderTrackerGrid(); renderDashboard();
+  const def = state.trackerDefs.find(d => d.id === _pendingTrackerDefId);
+  showToast('✅ ' + (def ? def.name : 'Entry') + ' logged!');
+  _pendingTrackerDefId = null;
+}
+
+function deleteTrackerLog(today, logId) {
+  state.trackerLogs[today] = (state.trackerLogs[today] || []).filter(l => l.id !== logId);
+  save(); renderTrackerGrid(); renderDashboard();
+}
+
+function renderTrackerGrid() {
+  const wrap = document.getElementById('tracker-grid-wrap');
+  if (!wrap) return;
+  const today = todayKey();
+  const todayLogs = state.trackerLogs[today] || [];
+
+  const items = state.trackerDefs.map(def => {
+    const logs = todayLogs.filter(l => l.defId === def.id);
+    const done = logs.length > 0;
+    const isOnce = def.logType === 'once';
+    return `<div class="tracker-btn ${done && isOnce ? 'done-once' : ''}" onclick="tapTracker('${def.id}')">
+      ${done && isOnce ? '<div class="t-check">✅</div>' : ''}
+      <div class="t-icon">${def.emoji}</div>
+      <div class="t-label">${def.name}</div>
+      ${!isOnce && logs.length ? `<div class="t-count">${logs.length}×</div>` : ''}
+      ${!isOnce && !logs.length ? `<div class="t-count" style="color:var(--text3);">tap to log</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const addBtn = `<div class="tracker-add-btn" onclick="openNewTracker()">
+    <div style="font-size:22px;">➕</div>
+    <div>New Tracker</div>
+  </div>`;
+
+  wrap.innerHTML = items + addBtn;
+  renderTrackerManage();
+}
+
+function renderTrackerManage() {
+  const el = document.getElementById('tracker-manage-list');
+  if (!el) return;
+  if (!state.trackerDefs.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:4px 0;">No trackers yet. Tap ➕ above to create one.</div>';
+    return;
+  }
+  const today = todayKey();
+  const todayLogs = state.trackerLogs[today] || [];
+  el.innerHTML = state.trackerDefs.map(def => {
+    const logs = todayLogs.filter(l => l.defId === def.id);
+    const badge = logs.length > 0
+      ? (def.logType === 'once' ? '✅ Done' : `${logs.length}× logged`)
+      : (def.logType === 'once' ? 'Not done' : 'Not logged');
+    const badgeColor = logs.length > 0 ? 'var(--accent)' : 'var(--text3)';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">${def.emoji}</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${def.name}</div>
+          <div style="font-size:10px;color:var(--text3);">${def.logType === 'once' ? 'Once a day' : 'Multi-log'}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:11px;font-weight:700;color:${badgeColor};">${badge}</div>
+        <div style="font-size:15px;cursor:pointer;color:var(--text3);" onclick="deleteTracker('${def.id}')">✕</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MOOD LOGGING ─────────────────────────────────────
+const MOOD_FACES = ['','😫','😕','😐','🙂','😄'];
+const MOOD_LABELS= ['','Rough','Poor','OK','Good','Great'];
+const ENERGY_FACES = ['','🪫','😴','⚡','🔋','🚀'];
+
+function selMoodLevel(el) {
+  _moodLevel = parseInt(el.dataset.lvl);
+  document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b === el));
+}
+function selMoodEnergy(el) {
+  _moodEnergy = parseInt(el.dataset.lvl);
+  document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b === el));
+}
+
+function initMoodTime() {
+  const now = new Date();
+  document.getElementById('mood-time-val').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+
+function logMood() {
+  if (state.readOnly) return;
+  if (!_moodLevel) { showToast('Select how you feel first'); return; }
+  const tags      = [...document.querySelectorAll('#mood-tags .mood-tag.on')].map(t => t.textContent.trim());
+  const timeLabel = document.getElementById('mood-time-label').value;
+  const timeV     = document.getElementById('mood-time-val').value;
+  const note      = document.getElementById('mood-note').value.trim();
+  const [hh, mm]  = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
+  const d = new Date(); const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
+  const today = todayKey();
+  const entry = { id: uid(), level: _moodLevel, energy: _moodEnergy, tags, timeLabel, note, timestamp: ts };
+  state.moodLogs[today] = [...(state.moodLogs[today] || []), entry];
+  save();
+  // Reset
+  _moodLevel = 0; _moodEnergy = 0;
+  document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#mood-tags .mood-tag').forEach(t => t.classList.remove('on'));
+  document.getElementById('mood-note').value = '';
+  initMoodTime();
+  renderMoodLog(); renderDashboard();
+  showToast('😊 Mood logged!');
+}
+
+function deleteMoodLog(today, id) {
+  state.moodLogs[today] = (state.moodLogs[today] || []).filter(e => e.id !== id);
+  save(); renderMoodLog(); renderDashboard();
+}
+
+function renderMoodLog() {
+  const ll  = document.getElementById('mood-log-list');
+  if (!ll) return;
+  const today = todayKey();
+  const logs = [...(state.moodLogs[today] || [])].sort((a,b) => a.timestamp - b.timestamp);
+  // Today strip at top
+  const strip = document.getElementById('mood-today-strip');
+  if (strip && logs.length) {
+    const avg = Math.round(logs.reduce((s,l) => s + l.level, 0) / logs.length);
+    strip.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;">
+      <div style="font-size:36px;">${MOOD_FACES[avg]||'😐'}</div>
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;color:var(--accent);">TODAY'S MOOD</div>
+        <div style="font-size:13px;color:var(--text2);">${MOOD_LABELS[avg]||'OK'} · ${logs.length} entr${logs.length===1?'y':'ies'}</div>
+        <div style="display:flex;gap:5px;margin-top:4px;">${logs.map(l => `<span style="font-size:16px;" title="${MOOD_LABELS[l.level]||''}">${MOOD_FACES[l.level]||'😐'}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  } else if (strip) { strip.innerHTML = ''; }
+
+  if (!logs.length) {
+    ll.innerHTML = '<div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.<br>Use the form above to log how you feel.</div></div>';
+    return;
+  }
+  ll.innerHTML = logs.map(e => {
+    const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
+    const ampm = hh >= 12 ? 'PM' : 'AM'; const h12 = hh % 12 || 12;
+    const energyStr = e.energy ? ` · Energy: ${ENERGY_FACES[e.energy]}` : '';
+    const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${e.tags.map(tag => `<span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
+    return `<div class="mood-entry-strip">
+      <div class="mood-face">${MOOD_FACES[e.level]||'😐'}</div>
+      <div class="mood-info">
+        <div class="mood-title">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
+        <div class="mood-meta">${e.timeLabel||''}${e.note ? ' · '+e.note : ''}</div>
+        ${tagsStr}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="mood-time">${h12}:${mm} ${ampm}</div>
+        <div style="font-size:13px;cursor:pointer;color:var(--text3);" onclick="deleteMoodLog('${todayKey()}','${e.id}')">✕</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DASHBOARD CARDS ──────────────────────────────────
+function renderDashTrackCard() {
+  const dtc = document.getElementById('dashboard-track-card');
+  const dmc = document.getElementById('dashboard-mood-card');
+  if (!dtc || !dmc) return;
+
+  const today = todayKey();
+
+  // Custom tracker card
+  const todayLogs = state.trackerLogs[today] || [];
+  if (state.trackerDefs.length) {
+    const items = state.trackerDefs.map(def => {
+      const logs = todayLogs.filter(l => l.defId === def.id);
+      const done = logs.length > 0;
+      const isOnce = def.logType === 'once';
+      const badge = done ? (isOnce ? '✅' : `${logs.length}×`) : '○';
+      const col   = done ? 'var(--accent)' : 'var(--text3)';
+      return `<div style="display:flex;align-items:center;gap:5px;cursor:pointer;" onclick="showPage('track', document.querySelector('.nav-btn[onclick*=track]'))">
+        <span style="font-size:15px;">${def.emoji}</span>
+        <span style="font-size:11px;font-weight:700;color:${col};">${badge}</span>
+        <span style="font-size:11px;color:var(--text2);">${def.name}</span>
+      </div>`;
+    }).join('');
+    dtc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,.2);">
+      <div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers Today</div></div>
+      <div class="card-body" style="padding-top:0;display:flex;flex-direction:column;gap:6px;">${items}</div>
+    </div>`;
+  } else { dtc.innerHTML = ''; }
+
+  // Mood card
+  const todayMood = state.moodLogs[today] || [];
+  if (todayMood.length) {
+    const latest = todayMood[todayMood.length - 1];
+    const avg    = Math.round(todayMood.reduce((s,l) => s + l.level, 0) / todayMood.length);
+    const energyStr = latest.energy ? ` · ${ENERGY_FACES[latest.energy]}` : '';
+    const tagsStr   = latest.tags?.length ? ` · ${latest.tags.slice(0,3).join(', ')}` : '';
+    dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.2);">
+      <div class="card-header">
+        <div class="card-title" style="color:var(--accent4);">😊 Mood Today</div>
+        <div style="font-size:20px;">${todayMood.map(l => MOOD_FACES[l.level]).join('')}</div>
+      </div>
+      <div class="card-body" style="padding-top:0;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-size:32px;">${MOOD_FACES[avg]||'😐'}</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">${MOOD_LABELS[avg]||'OK'}${energyStr}</div>
+            <div style="font-size:11px;color:var(--text3);">${latest.timeLabel||''}${tagsStr}</div>
+            ${latest.note ? `<div style="font-size:11px;color:var(--text3);margin-top:2px;">"${latest.note}"</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.15);">
+      <div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood Today</div></div>
+      <div class="card-body" style="padding-top:0;font-size:12px;color:var(--text3);">No mood logged yet. Tap <strong style="color:var(--accent4);">Track → Mood</strong> to log how you feel.</div>
+    </div>`;
+  }
+}
+
+// ── HISTORY INTEGRATION ──────────────────────────────
+function renderTrackHistoryCards(key) {
+  let html = '';
+
+  // Custom tracker logs for this day
+  const tLogs = state.trackerLogs[key] || [];
+  if (tLogs.length) {
+    const byDef = {};
+    tLogs.forEach(l => { (byDef[l.defId] = byDef[l.defId] || []).push(l); });
+    const rows = Object.entries(byDef).map(([defId, logs]) => {
+      const def = state.trackerDefs.find(d => d.id === defId);
+      const emoji = def ? def.emoji : '📌';
+      const name  = def ? def.name : 'Unknown';
+      const isOnce = def?.logType === 'once';
+      const detail = isOnce ? '✅ Done' : logs.map(l => {
+        const t = new Date(l.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
+        return `${hh%12||12}:${mm}${hh>=12?'PM':'AM'}${l.note?' ('+l.note+')':''}`;
+      }).join(', ');
+      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:18px;">${emoji}</span>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${name}</div>
+        <div style="font-size:11px;color:var(--text3);">${detail}</div></div>
+        ${isOnce ? '<span style="font-size:14px;color:var(--accent);">✅</span>' : `<span style="font-size:11px;font-weight:700;color:var(--accent);">${logs.length}×</span>`}
+      </div>`;
+    }).join('');
+    html += `<div class="card" style="margin-bottom:10px;border-color:rgba(0,229,160,.2);">
+      <div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers</div></div>
+      <div class="card-body" style="padding-top:0;">${rows}</div>
+    </div>`;
+  }
+
+  // Mood logs for this day
+  const mLogs = [...(state.moodLogs[key] || [])].sort((a,b) => a.timestamp - b.timestamp);
+  if (mLogs.length) {
+    const rows = mLogs.map(e => {
+      const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
+      const ampm = hh >= 12 ? 'PM' : 'AM'; const h12 = hh % 12 || 12;
+      const energyStr = e.energy ? ` · Energy ${ENERGY_FACES[e.energy]}` : '';
+      const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:24px;flex-shrink:0;">${MOOD_FACES[e.level]||'😐'}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
+          <div style="font-size:11px;color:var(--text3);">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>
+          ${tagsStr}
+        </div>
+        <div style="font-size:11px;color:var(--text3);flex-shrink:0;font-weight:600;">${h12}:${mm} ${ampm}</div>
+      </div>`;
+    }).join('');
+    const avg = Math.round(mLogs.reduce((s,l)=>s+l.level,0)/mLogs.length);
+    html += `<div class="card" style="margin-bottom:10px;border-color:rgba(255,209,102,.2);">
+      <div class="card-header">
+        <div class="card-title" style="color:var(--accent4);">😊 Mood</div>
+        <div style="font-size:18px;">${mLogs.map(l=>MOOD_FACES[l.level]).join('')}</div>
+      </div>
+      <div class="card-body" style="padding-top:0;">${rows}</div>
+    </div>`;
+  }
+
+  return html;
+}
+
+// ===================== BOOT ======================
 // ===================== BOOT ======================
 init();
 </script>
+
+<!-- ADD TRACKER MODAL -->
+<div class="modal-overlay" id="modal-new-tracker">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--accent);">📋 New Tracker</div>
+    <div class="input-group">
+      <div class="input-label">Emoji Icon</div>
+      <input class="input-field" type="text" id="nt-emoji" placeholder="e.g. 💊 🚿 ☕ 📖 🧴" maxlength="4" style="font-size:22px;text-align:center;padding:10px;">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Tracker Name</div>
+      <input class="input-field" type="text" id="nt-name" placeholder="e.g. Took Medicine, Showered, Coffee">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Log Type</div>
+      <div style="display:flex;gap:10px;">
+        <div id="nt-type-once" class="workout-type-btn" onclick="selectTrackerType('once')" style="flex:1;padding:12px 8px;">
+          ✅ Once a Day<div style="font-size:10px;color:var(--text3);margin-top:3px;font-weight:400;">Marks done/not done</div>
+        </div>
+        <div id="nt-type-multi" class="workout-type-btn active" onclick="selectTrackerType('multi')" style="flex:1;padding:12px 8px;">
+          🔁 Multiple Times<div style="font-size:10px;color:var(--text3);margin-top:3px;font-weight:400;">Logs each occurrence</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveNewTracker()" style="flex:1;">Add Tracker</button>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+</div>
+
+<!-- LOG TRACKER NOTE MODAL (for multi-log items with optional note) -->
+<div class="modal-overlay" id="modal-log-tracker">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="log-tracker-title" style="color:var(--accent);">Log Entry</div>
+    <div class="input-group">
+      <div class="input-label">Note (optional)</div>
+      <input class="input-field" type="text" id="log-tracker-note" placeholder="Add a note...">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Time</div>
+      <input class="input-field" type="time" id="log-tracker-time">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="confirmLogTracker()" style="flex:1;">Log It</button>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+</div>
 </body>
 </html>
