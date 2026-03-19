@@ -1664,7 +1664,7 @@ function renderDashboard() {
   const iw = document.getElementById('insights-wrap');
   iw.innerHTML = '';
   if (cal === 0 && currentPeriod === 'day') {
-    iw.innerHTML = `<div class="insight-card"><div class="insight-icon">👋</div><div class="insight-text"><strong>Hey Jermaine!</strong> Start logging your meals to see your nutrition breakdown here.</div></div>`;
+    iw.innerHTML = '';
   } else if (pct >= 0.9 && pct <= 1.05) {
     iw.innerHTML = `<div class="insight-card"><div class="insight-icon">🎯</div><div class="insight-text"><strong>Great job!</strong> You're right on target with your calorie goal today.</div></div>`;
   } else if (pct > 1.05) {
