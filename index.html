@@ -230,7 +230,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .water-bar-wrap { flex:1; height:8px; background:rgba(0,184,255,0.1); border-radius:4px; overflow:hidden; border:1px solid rgba(0,184,255,0.15); }
   .water-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#00b8ff,#0070ff); transition:width 0.5s ease; }
   .water-oz-display { font-family:'DM Mono',monospace; font-size:12px; color:var(--accent2); white-space:nowrap; }
-  .water-quick-btns { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+  .water-quick-btns { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:12px; }
   .water-quick-btn { background:rgba(0,184,255,0.08); border:1px solid rgba(0,184,255,0.2); border-radius:var(--radius-sm); padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; color:var(--accent2); font-size:12px; font-weight:700; }
   .water-quick-btn:active { background:rgba(0,184,255,0.2); transform:scale(0.95); }
   .water-quick-btn-sub { font-size:9px; color:var(--text3); font-weight:400; margin-top:2px; }
@@ -388,51 +388,28 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .weight-chart-val { font-size: 9px; color: var(--accent4); margin-bottom: 2px; font-family: 'DM Mono', monospace; }
 
   /* ── TRACK PAGE ──────────────────────────────────────────── */
-  .tracker-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 14px; }
-  .tracker-btn {
-    border-radius: var(--radius); padding: 14px 8px 10px; text-align: center;
-    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
-    box-shadow: var(--sh, 0 2px 10px rgba(0,0,0,.2)); transition: all .18s;
-    display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative;
-  }
-  .tracker-btn:active { transform: scale(.94); }
-  .tracker-btn.done-once { border-color: var(--accent); background: rgba(0,229,160,.08); }
-  .tracker-btn .t-icon  { font-size: 26px; line-height: 1; }
-  .tracker-btn .t-label { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.2; }
-  .tracker-btn .t-count { font-size: 10px; color: var(--accent); font-weight: 700; }
-  .tracker-btn .t-check { position:absolute;top:6px;right:6px;font-size:13px; }
-  .tracker-add-btn {
-    border-radius: var(--radius); padding: 14px 8px; text-align:center;
-    cursor: pointer; border: 2px dashed var(--border); background: transparent;
-    display:flex; flex-direction:column; align-items:center; gap:5px;
-    color: var(--text3); font-size: 11px; font-weight: 700; transition: all .18s;
-  }
-  .tracker-add-btn:active { border-color: var(--accent); color: var(--accent); }
-
+  .tracker-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:14px; }
+  .tracker-btn { border-radius:var(--radius); padding:14px 8px 10px; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--surface); box-shadow:0 2px 10px rgba(0,0,0,.2); transition:all .18s; display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
+  .tracker-btn:active { transform:scale(.94); }
+  .tracker-btn.done-once { border-color:var(--accent); background:rgba(0,229,160,.08); }
+  .tracker-btn .t-icon  { font-size:26px; line-height:1; }
+  .tracker-btn .t-label { font-size:11px; font-weight:700; color:var(--text); line-height:1.2; }
+  .tracker-btn .t-count { font-size:10px; color:var(--accent); font-weight:700; }
+  .tracker-btn .t-check { position:absolute; top:6px; right:6px; font-size:13px; }
+  .tracker-add-btn { border-radius:var(--radius); padding:14px 8px; text-align:center; cursor:pointer; border:2px dashed var(--border); background:transparent; display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--text3); font-size:11px; font-weight:700; transition:all .18s; }
+  .tracker-add-btn:active { border-color:var(--accent); color:var(--accent); }
   /* MOOD */
   .mood-level-row { display:flex; gap:8px; justify-content:center; margin-bottom:14px; }
-  .mood-level-btn {
-    width: 50px; height: 56px; border-radius: var(--radius-sm);
-    border: 2px solid var(--border); background: var(--surface);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap: 3px; cursor:pointer; transition: all .18s;
-  }
-  .mood-level-btn .ml-emoji { font-size: 20px; line-height:1; }
-  .mood-level-btn .ml-label { font-size: 8px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.3px; }
-  .mood-level-btn.active { border-color: var(--accent); background: rgba(0,229,160,.1); }
+  .mood-level-btn { width:50px; height:56px; border-radius:var(--radius-sm); border:2px solid var(--border); background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; transition:all .18s; }
+  .mood-level-btn .ml-emoji { font-size:20px; line-height:1; }
+  .mood-level-btn .ml-label { font-size:8px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.3px; }
+  .mood-level-btn.active { border-color:var(--accent); background:rgba(0,229,160,.1); }
   .mood-tag-row { display:flex; flex-wrap:wrap; gap:6px; padding:0 20px; margin-bottom:13px; }
-  .mood-tag {
-    padding: 6px 12px; border-radius: 18px; font-size: 12px; font-weight:600;
-    cursor:pointer; border: 1px solid var(--border); background: var(--surface2);
-    color: var(--text2); transition: all .16s;
-  }
-  .mood-tag.on { background: rgba(0,229,160,.12); border-color: var(--accent); color: var(--accent); }
-  .mood-entry-strip {
-    display:flex; align-items:center; gap:10px; padding:10px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  .mood-tag { padding:6px 12px; border-radius:18px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--surface2); color:var(--text2); transition:all .16s; }
+  .mood-tag.on { background:rgba(0,229,160,.12); border-color:var(--accent); color:var(--accent); }
+  .mood-entry-strip { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
   .mood-entry-strip:last-child { border-bottom:none; }
-  .mood-face { font-size: 24px; flex-shrink:0; }
+  .mood-face { font-size:24px; flex-shrink:0; }
   .mood-info { flex:1; min-width:0; }
   .mood-title { font-size:13px; font-weight:700; color:var(--text); }
   .mood-meta  { font-size:11px; color:var(--text3); margin-top:2px; }
@@ -545,6 +522,9 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         <div class="tab active" id="htab-days" onclick="switchHistoryTab('days',this)">📅 Past Days</div>
         <div class="tab" id="htab-foods" onclick="switchHistoryTab('foods',this)">🍽️ Saved Foods</div>
       </div>
+      <div id="saved-foods-toolbar" style="display:none;margin-bottom:10px;">
+        <button class="btn btn-primary" onclick="openAddSavedFood()" style="font-size:13px;padding:10px 16px;">➕ Add Food to My List</button>
+      </div>
       <div id="history-days-view">
         <div class="card" style="margin-bottom:12px;">
           <div class="card-body" style="padding:12px 16px;">
@@ -608,10 +588,11 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         </div>
         <div class="section-label">Quick Add</div>
         <div class="water-quick-btns">
+          <div class="water-quick-btn" onclick="addWater(4)">+4 oz<div class="water-quick-btn-sub">½ cup</div></div>
           <div class="water-quick-btn" onclick="addWater(8)">+8 oz<div class="water-quick-btn-sub">1 cup</div></div>
-          <div class="water-quick-btn" onclick="addWater(12)">+12 oz<div class="water-quick-btn-sub">Small</div></div>
           <div class="water-quick-btn" onclick="addWater(16)">+16 oz<div class="water-quick-btn-sub">Medium</div></div>
           <div class="water-quick-btn" onclick="addWater(24)">+24 oz<div class="water-quick-btn-sub">Large</div></div>
+          <div class="water-quick-btn" onclick="addWater(30)">+30 oz<div class="water-quick-btn-sub">XL</div></div>
         </div>
         <div class="card" style="margin-bottom:12px;">
           <div class="card-header"><div class="card-title">Custom Amount</div></div>
@@ -1015,7 +996,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
                   <option value="Afternoon">🌤 Afternoon</option>
                   <option value="Evening">🌆 Evening</option>
                   <option value="Bedtime">🌙 Bedtime</option>
-                  <option value="Custom">⏰ Custom time</option>
                 </select>
               </div>
               <div>
@@ -1033,7 +1013,9 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
           </div>
         </div>
         <div class="section-label">Today's Mood Log</div>
-        <div class="card"><div class="card-body" id="mood-log-list" style="padding-top:6px;"><div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.</div></div></div></div>
+        <div class="card"><div class="card-body" id="mood-log-list" style="padding-top:6px;">
+          <div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.</div></div>
+        </div></div>
         <div style="height:80px;"></div>
       </div>
     </div>
@@ -1359,6 +1341,7 @@ async function init() {
   if (uidEl) uidEl.textContent = 'local';
 
   await loadData();
+  renderTrackerGrid();
 
   updateDate();
   renderDashboard();
@@ -1366,9 +1349,6 @@ async function init() {
   renderBathroom();
   buildShareLinks();
   setSyncStatus('synced');
-
-  // Init Track page
-  renderTrackerGrid();
 
   // Pre-fill fitness date fields
   const today = todayKey();
@@ -1402,7 +1382,7 @@ function buildShareLinks() {
 
 function buildViewLink() {
   const base = getBaseUrl();
-  const payload = JSON.stringify({ goals: state.goals, log: state.log, savedFoods: state.savedFoods, water: state.water, bathroom: state.bathroom, workouts: state.workouts, weights: state.weights });
+  const payload = JSON.stringify({ goals: state.goals, log: state.log, savedFoods: state.savedFoods, water: state.water, bathroom: state.bathroom, workouts: state.workouts, weights: state.weights, trackerDefs: state.trackerDefs, trackerLogs: state.trackerLogs, moodLogs: state.moodLogs });
   const encoded = btoa(encodeURIComponent(payload));
   const viewLink = base + '#view=' + encoded;
   document.getElementById('link-view').textContent = viewLink;
@@ -1967,6 +1947,8 @@ function switchHistoryTab(tab, el) {
   el.classList.add('active');
   document.getElementById('history-days-view').style.display = tab === 'days' ? '' : 'none';
   document.getElementById('history-foods-view').style.display = tab === 'foods' ? '' : 'none';
+  const tb = document.getElementById('saved-foods-toolbar');
+  if (tb) tb.style.display = (tab === 'foods' && !state.readOnly) ? '' : 'none';
   if (tab === 'foods') renderSavedFoods();
 }
 
@@ -1994,10 +1976,10 @@ function renderHistory() {
     const hasFood = (state.log[key] || []).length > 0;
     const hasWater = (state.water[key] || []).length > 0;
     const hasBath = (state.bathroom[key] || []).length > 0;
-    const hasWorkout  = (state.workouts[key] || []).length > 0;
-    const hasWeight   = (state.weights[key] || []).length > 0;
-    const hasTracker  = (state.trackerLogs[key] || []).length > 0;
-    const hasMood     = (state.moodLogs[key] || []).length > 0;
+    const hasWorkout = (state.workouts[key] || []).length > 0;
+    const hasWeight  = (state.weights[key]  || []).length > 0;
+    const hasTracker = (state.trackerLogs[key] || []).length > 0;
+    const hasMood    = (state.moodLogs[key]    || []).length > 0;
     const hasData = hasFood || hasWater || hasBath || hasWorkout || hasWeight || hasTracker || hasMood;
     const isToday = key === today;
     const isFuture = new Date(m.getFullYear(), m.getMonth(), d) > todayDate;
@@ -2031,7 +2013,7 @@ function renderHistoryDayDetail(key) {
   const dd = document.getElementById('history-day-detail');
 
   const trackerEntries = state.trackerLogs[key] || [];
-  const moodEntries     = state.moodLogs[key] || [];
+  const moodEntries     = state.moodLogs[key]    || [];
   if (!entries.length && !waterEntries.length && !bathEntries.length && !workoutEntries.length && !weightEntries.length && !trackerEntries.length && !moodEntries.length) {
     dd.innerHTML = `<div class="empty-state" style="padding:24px 0;"><div class="empty-state-icon">🍽️</div><div class="empty-state-text">Nothing logged on this day.</div></div>`;
     return;
@@ -2211,7 +2193,7 @@ function renderHistoryDayDetail(key) {
     </div>`;
   }
 
-  // Track + Mood cards
+  // Track + Mood history cards
   html += renderTrackHistoryCards(key);
 
   dd.innerHTML = html;
@@ -2219,16 +2201,24 @@ function renderHistoryDayDetail(key) {
 
 function renderSavedFoods() {
   const hl = document.getElementById('history-list');
+  // Show/hide toolbar
+  const tb = document.getElementById('saved-foods-toolbar');
+  if (tb) tb.style.display = state.readOnly ? 'none' : '';
   if (!state.savedFoods.length) {
-    hl.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><div class="empty-state-text">No saved foods yet.</div></div>`;
+    hl.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><div class="empty-state-text">No saved foods yet.<br>Foods you log are saved here automatically.<br>Tap ➕ above to add one manually.</div></div>`;
     return;
   }
   hl.innerHTML = state.savedFoods.slice().reverse().map(f => `
-    <div class="history-food" style="padding:12px 16px;" onclick="${state.readOnly ? '' : `quickAddFood('${f.id}')`}">
+    <div class="history-food" style="padding:12px 16px;cursor:default;">
       <div style="width:34px;height:34px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">${f.emoji}</div>
-      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
-      <div style="font-size:11px;color:var(--text3);">${Math.round(f.baseNutrients.calories||0)} cal base</div></div>
-      ${state.readOnly ? '' : `<div style="font-size:11px;color:var(--accent);font-weight:700;">+ Add</div>`}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${Math.round(f.baseNutrients.calories||0)} cal · ${Math.round(f.baseNutrients.protein||0)}g P · ${Math.round(f.baseNutrients.totalCarbs||0)}g C · ${Math.round(f.baseNutrients.totalFat||0)}g F</div>
+      </div>
+      ${state.readOnly ? '' : `<div style="display:flex;gap:8px;align-items:center;">
+        <div style="font-size:12px;color:var(--accent2);font-weight:700;cursor:pointer;padding:4px 8px;border:1px solid rgba(0,184,255,0.3);border-radius:6px;" onclick="openEditSavedFood('${f.id}')">✏️ Edit</div>
+        <div style="font-size:12px;color:var(--text3);cursor:pointer;padding:4px;" onclick="deleteSavedFood('${f.id}')">✕</div>
+      </div>`}
     </div>`).join('');
 }
 
@@ -2245,6 +2235,89 @@ function quickAddFood(savedId) {
   if (!f) return;
   state.currentFood = f; state.portionMultiplier = 1.0;
   openAddFood(); showFoodForm(); populateFormPreview();
+}
+
+function deleteSavedFood(id) {
+  if (!confirm('Remove this food from My Foods?')) return;
+  state.savedFoods = state.savedFoods.filter(f => f.id !== id);
+  save(); renderSavedFoods();
+  showToast('🗑️ Food removed');
+}
+
+function openAddSavedFood() {
+  // Open the edit modal pre-populated with blank nutrients for a brand-new saved food
+  const blankNutrients = {};
+  const NUTRIENTS_KEY_LOCAL = ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat','cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein','vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'];
+  NUTRIENTS_KEY_LOCAL.forEach(k => blankNutrients[k] = 0);
+  const tempFood = { id: '__new__', name: '', emoji: randEmoji(), baseNutrients: blankNutrients };
+  openSavedFoodEditor(tempFood, true);
+}
+
+function openEditSavedFood(id) {
+  const f = state.savedFoods.find(sf => sf.id === id);
+  if (!f) return;
+  openSavedFoodEditor(f, false);
+}
+
+function openSavedFoodEditor(food, isNew) {
+  const bn = food.baseNutrients || {};
+  const sections = [
+    { title: '🔥 Calories & Macros', keys: ['calories','protein','totalCarbs','totalFat','dietaryFiber','totalSugars','addedSugars','sodium','cholesterol','saturatedFat','transFat'] },
+    { title: '💊 Vitamins', keys: ['vitaminA','vitaminC','vitaminD','vitaminB12'] },
+    { title: '⚡ Minerals', keys: ['calcium','iron','potassium','magnesium','zinc'] },
+  ];
+  const NUTRIENTS_LABEL_L = { calories:'Calories', totalFat:'Total Fat', saturatedFat:'Sat. Fat', transFat:'Trans Fat', polyunsaturatedFat:'Poly Fat', monounsaturatedFat:'Mono Fat', cholesterol:'Cholesterol', sodium:'Sodium', totalCarbs:'Total Carbs', dietaryFiber:'Fiber', totalSugars:'Total Sugars', addedSugars:'Added Sugars', protein:'Protein', vitaminD:'Vitamin D', calcium:'Calcium', iron:'Iron', potassium:'Potassium', vitaminA:'Vitamin A', vitaminC:'Vitamin C', vitaminB12:'B12', magnesium:'Magnesium', zinc:'Zinc' };
+  const NUTRIENTS_UNIT_L  = { calories:'cal', totalFat:'g', saturatedFat:'g', transFat:'g', polyunsaturatedFat:'g', monounsaturatedFat:'g', cholesterol:'mg', sodium:'mg', totalCarbs:'g', dietaryFiber:'g', totalSugars:'g', addedSugars:'g', protein:'g', vitaminD:'mcg', calcium:'mg', iron:'mg', potassium:'mg', vitaminA:'mcg', vitaminC:'mg', vitaminB12:'mcg', magnesium:'mg', zinc:'mg' };
+
+  const formBody = document.getElementById('edit-form-body');
+  formBody.innerHTML = `
+    <div class="input-group">
+      <div class="input-label">Food Name</div>
+      <input class="input-field" type="text" id="esf-name" value="${(food.name||'').replace(/"/g,'&quot;')}" placeholder="e.g. Chicken Breast">
+    </div>
+    <div class="input-group">
+      <div class="input-label">Emoji</div>
+      <input class="input-field" type="text" id="esf-emoji" value="${food.emoji||'🍽️'}" maxlength="4" style="font-size:22px;text-align:center;padding:10px;">
+    </div>
+    ${sections.map(sec => `
+      <div class="ne-section-title">${sec.title}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-bottom:8px;">
+        ${sec.keys.map(k => `<div>
+          <div class="input-label" style="margin-bottom:4px;">${NUTRIENTS_LABEL_L[k]||k} <span style="color:var(--text3);font-weight:400;">(${NUTRIENTS_UNIT_L[k]||''})</span></div>
+          <input class="input-field nu-input" type="number" id="esf-${k}" value="${+(bn[k]||0).toFixed(2)}" placeholder="0" min="0" style="font-size:14px;padding:10px 12px;" onfocus="nuFocus(this)" onblur="nuBlur(this)">
+        </div>`).join('')}
+      </div>`).join('')}
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="saveSavedFoodEdit('${food.id}','${isNew}')" style="flex:1;">${isNew ? 'Add to My Foods' : 'Save Changes'}</button>
+      ${!isNew ? `<button class="btn btn-danger" onclick="deleteSavedFood('${food.id}');closeModal('modal-edit');" style="flex:1;">Delete</button>` : ''}
+    </div>
+    <div style="height:24px;"></div>`;
+  openModal('modal-edit');
+}
+
+function saveSavedFoodEdit(id, isNew) {
+  const name = document.getElementById('esf-name').value.trim();
+  if (!name) { showToast('Enter a food name'); return; }
+  const emoji = document.getElementById('esf-emoji').value.trim() || '🍽️';
+  const allKeys = ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat','cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein','vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'];
+  const nutrients = {};
+  allKeys.forEach(k => {
+    const el = document.getElementById('esf-' + k);
+    nutrients[k] = el ? parseFloat(el.value) || 0 : 0;
+  });
+  if (isNew === 'true' || id === '__new__') {
+    state.savedFoods.unshift({ id: uid(), name, emoji, baseNutrients: nutrients });
+    showToast('✅ ' + name + ' added to My Foods!');
+  } else {
+    const idx = state.savedFoods.findIndex(f => f.id === id);
+    if (idx >= 0) {
+      state.savedFoods[idx] = { ...state.savedFoods[idx], name, emoji, baseNutrients: nutrients };
+    }
+    showToast('✅ ' + name + ' updated!');
+  }
+  save();
+  closeModal('modal-edit');
+  renderSavedFoods();
 }
 
 // ===================== WATER =====================
@@ -2435,6 +2508,7 @@ function openBathroomModal(type, editId) {
 
   const colorNote = colors.find(c => c.id === selectedColor)?.note || '';
 
+  const existingNote = existingEntry?.note || '';
   document.getElementById('bath-modal-body').innerHTML = `
     <div class="input-group" style="padding:0 20px;margin-bottom:16px;">
       <div class="input-label">Time</div>
@@ -2450,6 +2524,13 @@ function openBathroomModal(type, editId) {
     <div id="color-note" style="padding:0 20px;font-size:11px;color:var(--text3);margin-bottom:4px;min-height:16px;">${colorNote}</div>
 
     ${consistencyHtml}
+
+    ${!isPee ? `
+    <div class="input-group" style="padding:0 20px;margin-top:16px;margin-bottom:4px;">
+      <div class="input-label">Notes (optional)</div>
+      <textarea class="input-field" id="bath-notes-input" rows="3" placeholder="e.g. saw blood, straining, loose, urgent..."
+        style="resize:none;font-size:14px;line-height:1.5;">${existingNote}</textarea>
+    </div>` : ''}
 
     <div class="btn-row" style="margin-top:18px;">
       <button class="btn btn-primary" onclick="saveBathroomEntry()" style="flex:1;">
@@ -2503,6 +2584,9 @@ function saveBathroomEntry() {
   const key = todayKey();
   state.bathroom[key] = state.bathroom[key] || [];
 
+  const notesEl = document.getElementById('bath-notes-input');
+  const bathNote = notesEl ? notesEl.value.trim() : '';
+
   if (_bathModal.editId) {
     const idx = state.bathroom[key].findIndex(e => e.id === _bathModal.editId);
     if (idx >= 0) {
@@ -2510,6 +2594,7 @@ function saveBathroomEntry() {
         ...state.bathroom[key][idx],
         color: _bathModal.color,
         consistency: _bathModal.type === 'poop' ? _bathModal.consistency : undefined,
+        note: _bathModal.type === 'poop' ? bathNote : undefined,
         timestamp: ts,
       };
     }
@@ -2520,7 +2605,10 @@ function saveBathroomEntry() {
       color: _bathModal.color,
       timestamp: ts,
     };
-    if (_bathModal.type === 'poop') entry.consistency = _bathModal.consistency || 4;
+    if (_bathModal.type === 'poop') {
+      entry.consistency = _bathModal.consistency || 4;
+      entry.note = bathNote;
+    }
     state.bathroom[key].push(entry);
   }
 
@@ -2601,6 +2689,7 @@ function renderBathroom() {
       const subParts = [];
       if (colorLabel) subParts.push(colorLabel);
       if (bristolInfo) subParts.push(`Type ${bristolInfo.num} · ${bristolInfo.title}`);
+      if (e.note) subParts.push(e.note);
       const subText = subParts.join(' · ');
 
       return `<div class="bath-entry" onclick="${state.readOnly ? '' : `openBathroomModal('${e.type}','${e.id}')`}">
@@ -2941,7 +3030,7 @@ function setAddMode(mode) {
 function onSearchInput(val) {
   clearTimeout(searchTimeout);
   if (!val.trim()) { document.getElementById('search-results-wrap').innerHTML = ''; return; }
-  searchTimeout = setTimeout(() => searchFood(val), 600);
+  searchTimeout = setTimeout(() => searchFood(val), 150);
 }
 
 // Maps USDA nutrient IDs to our keys
@@ -3196,43 +3285,17 @@ function searchOfflineDB(query) {
   return results.sort((a,b) => b.score - a.score).slice(0, 5).map(r => r.food);
 }
 
-async function searchFood(query) {
-  const sl = document.getElementById('search-loading');
+function searchFood(query) {
+  // 100% offline — instant results, no network calls
   const srw = document.getElementById('search-results-wrap');
-  sl.style.display = 'flex'; srw.innerHTML = '';
-
-  // 1. Search personal saved foods instantly (highest priority)
+  srw.innerHTML = '';
   const personalResults = searchSavedFoods(query);
-
-  // 2. Search offline built-in DB instantly
-  const offlineResults = searchOfflineDB(query);
-
-  // 3. Try online APIs in parallel (gracefully fails if offline)
-  const onlinePromise = Promise.allSettled([
-    fetchOpenFoodFacts(query),
-    fetchUSDA(query)
-  ]);
-
-  // Show personal + offline results immediately while online loads
-  const instantResults = mergeResults([...personalResults, ...offlineResults]);
-  if (instantResults.length) {
-    sl.style.display = 'none';
-    renderSearchResults(instantResults, true);
-  }
-
-  try {
-    const [offResults, usdaResults] = await onlinePromise;
-    const off  = offResults.status  === 'fulfilled' ? offResults.value  : [];
-    const usda = usdaResults.status === 'fulfilled' ? usdaResults.value : [];
-
-    // Personal foods always first, then online, then offline DB
-    const merged = mergeResults([...personalResults, ...off, ...usda, ...offlineResults]);
-    sl.style.display = 'none';
-    if (merged.length) renderSearchResults(merged, false);
-    else if (!instantResults.length) srw.innerHTML = `<div class="no-results">No results found. Try a different spelling or use Manual Entry.</div>`;
-  } catch(e) {
-    sl.style.display = 'none';
-    if (!instantResults.length) srw.innerHTML = `<div class="no-results">No results. Use Manual Entry to log nutrients directly.</div>`;
+  const offlineResults  = searchOfflineDB(query);
+  const merged = mergeResults([...personalResults, ...offlineResults]);
+  if (merged.length) {
+    renderSearchResults(merged, false);
+  } else {
+    srw.innerHTML = `<div class="no-results">No matches. Try a different spelling or use <strong>Manual Entry</strong>.</div>`;
   }
 }
 
@@ -3247,30 +3310,7 @@ function mergeResults(foods) {
   return merged;
 }
 
-async function fetchOpenFoodFacts(query) {
-  const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=8&sort_by=unique_scans_n&fields=product_name,product_name_en,nutriments,serving_size,serving_quantity,brands`;
-  const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
-  const data = await resp.json();
-  return (data.products || [])
-    .filter(p => (p.product_name || p.product_name_en) && p.nutriments)
-    .slice(0, 6)
-    .map(offProductToFood);
-}
 
-async function fetchUSDA(query) {
-  const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(query)}&pageSize=5&dataType=Branded,SR%20Legacy,Foundation&api_key=DEMO_KEY`;
-  const resp = await fetch(url, { signal: AbortSignal.timeout(6000) });
-  const data = await resp.json();
-  return (data.foods || []).slice(0, 5).map(item => {
-    const n = {}; NUTRIENTS_KEY.forEach(k => n[k] = 0);
-    (item.foodNutrients || []).forEach(fn => {
-      const key = USDA_NUT_MAP[fn.nutrientId];
-      if (key) n[key] = fn.value || 0;
-    });
-    n.name = item.description + (item.servingSize ? ` (${item.servingSize}${item.servingSizeUnit || 'g'})` : '');
-    return n;
-  });
-}
 
 function renderSearchResults(foods, stillLoading) {
   const srw = document.getElementById('search-results-wrap');
@@ -3932,11 +3972,14 @@ function saveEditWeight(oldDateKey, id) {
 // ══════════════════════════════════════════════════
 //  TRACK PAGE — CUSTOM TRACKERS + MOOD
 // ══════════════════════════════════════════════════
+const MOOD_FACES  = ['','😫','😕','😐','🙂','😄'];
+const MOOD_LABELS = ['','Rough','Poor','OK','Good','Great'];
+const ENERGY_FACES= ['','🪫','😴','⚡','🔋','🚀'];
 
 let _trackTab = 'custom';
-let _ntType = 'multi';
+let _ntType   = 'multi';
 let _pendingTrackerDefId = null;
-let _moodLevel = 0;
+let _moodLevel  = 0;
 let _moodEnergy = 0;
 
 function switchTrackTab(tab, el) {
@@ -3944,12 +3987,12 @@ function switchTrackTab(tab, el) {
   document.querySelectorAll('#page-track .tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('track-custom-view').style.display = tab === 'custom' ? '' : 'none';
-  document.getElementById('track-mood-view').style.display = tab === 'mood' ? '' : 'none';
+  document.getElementById('track-mood-view').style.display   = tab === 'mood'   ? '' : 'none';
   if (tab === 'custom') renderTrackerGrid();
-  if (tab === 'mood') { renderMoodLog(); initMoodTime(); }
+  if (tab === 'mood')   { renderMoodLog(); initMoodTime(); }
 }
 
-// ── CUSTOM TRACKERS ─────────────────────────────────
+// ── CUSTOM TRACKERS ──────────────────────────────────
 function selectTrackerType(t) {
   _ntType = t;
   document.getElementById('nt-type-once').classList.toggle('active', t === 'once');
@@ -3959,7 +4002,8 @@ function selectTrackerType(t) {
 function openNewTracker() {
   _ntType = 'multi';
   document.getElementById('nt-emoji').value = '';
-  document.getElementById('nt-name').value = '';
+  document.getElementById('nt-name').value  = '';
+  document.getElementById('nt-units').value = '';
   selectTrackerType('multi');
   openModal('modal-new-tracker');
 }
@@ -3967,52 +4011,49 @@ function openNewTracker() {
 function saveNewTracker() {
   const emoji = document.getElementById('nt-emoji').value.trim() || '📌';
   const name  = document.getElementById('nt-name').value.trim();
+  const units = document.getElementById('nt-units').value.trim();
   if (!name) { showToast('Enter a tracker name'); return; }
-  const def = { id: uid(), name, emoji, logType: _ntType };
-  state.trackerDefs.push(def);
+  state.trackerDefs.push({ id: uid(), name, emoji, logType: _ntType, units });
   save();
   closeModal('modal-new-tracker');
   renderTrackerGrid();
-  renderTrackerManage();
   showToast(emoji + ' ' + name + ' tracker added!');
 }
 
 function deleteTracker(defId) {
   if (!confirm('Delete this tracker and all its logs?')) return;
   state.trackerDefs = state.trackerDefs.filter(d => d.id !== defId);
-  // Clean logs
   Object.keys(state.trackerLogs).forEach(dk => {
     state.trackerLogs[dk] = (state.trackerLogs[dk] || []).filter(l => l.defId !== defId);
   });
-  save();
-  renderTrackerGrid();
-  renderTrackerManage();
+  save(); renderTrackerGrid();
 }
 
 function tapTracker(defId) {
   if (state.readOnly) return;
   const def = state.trackerDefs.find(d => d.id === defId);
   if (!def) return;
-  const today = todayKey();
+  const today    = todayKey();
   const todayLogs = state.trackerLogs[today] || [];
   const alreadyDone = todayLogs.some(l => l.defId === defId);
 
   if (def.logType === 'once') {
     if (alreadyDone) {
-      // toggle off
       state.trackerLogs[today] = todayLogs.filter(l => l.defId !== defId);
       save(); renderTrackerGrid(); renderDashboard();
       showToast('↩️ ' + def.name + ' unchecked');
     } else {
-      state.trackerLogs[today] = [...todayLogs, { id: uid(), defId, timestamp: Date.now(), note: '' }];
+      state.trackerLogs[today] = [...todayLogs, { id: uid(), defId, timestamp: Date.now(), amount: '', note: '' }];
       save(); renderTrackerGrid(); renderDashboard();
       showToast('✅ ' + def.name + ' logged!');
     }
   } else {
-    // multi — open note modal
     _pendingTrackerDefId = defId;
+    const amtLabel = def.units ? `Amount (${def.units})` : 'Amount (optional)';
     document.getElementById('log-tracker-title').textContent = def.emoji + ' ' + def.name;
-    document.getElementById('log-tracker-note').value = '';
+    document.getElementById('log-tracker-amount-label').textContent = amtLabel;
+    document.getElementById('log-tracker-amount').value = '';
+    document.getElementById('log-tracker-note').value   = '';
     const now = new Date();
     document.getElementById('log-tracker-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     openModal('modal-log-tracker');
@@ -4021,40 +4062,40 @@ function tapTracker(defId) {
 
 function confirmLogTracker() {
   if (!_pendingTrackerDefId) return;
-  const today = todayKey();
-  const note  = document.getElementById('log-tracker-note').value.trim();
-  const timeV = document.getElementById('log-tracker-time').value;
+  const today  = todayKey();
+  const amount = document.getElementById('log-tracker-amount').value.trim();
+  const note   = document.getElementById('log-tracker-note').value.trim();
+  const timeV  = document.getElementById('log-tracker-time').value;
   const [hh, mm] = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
-  const d = new Date(); const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
-  state.trackerLogs[today] = [...(state.trackerLogs[today] || []), { id: uid(), defId: _pendingTrackerDefId, timestamp: ts, note }];
+  const d  = new Date();
+  const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
+  state.trackerLogs[today] = [...(state.trackerLogs[today] || []), { id: uid(), defId: _pendingTrackerDefId, timestamp: ts, amount, note }];
   save();
   closeModal('modal-log-tracker');
   renderTrackerGrid(); renderDashboard();
   const def = state.trackerDefs.find(d => d.id === _pendingTrackerDefId);
-  showToast('✅ ' + (def ? def.name : 'Entry') + ' logged!');
+  const amtStr = amount ? ' · ' + amount + (def?.units ? ' ' + def.units : '') : '';
+  showToast('✅ ' + (def ? def.name : 'Entry') + ' logged' + amtStr + '!');
   _pendingTrackerDefId = null;
-}
-
-function deleteTrackerLog(today, logId) {
-  state.trackerLogs[today] = (state.trackerLogs[today] || []).filter(l => l.id !== logId);
-  save(); renderTrackerGrid(); renderDashboard();
 }
 
 function renderTrackerGrid() {
   const wrap = document.getElementById('tracker-grid-wrap');
   if (!wrap) return;
-  const today = todayKey();
+  const today     = todayKey();
   const todayLogs = state.trackerLogs[today] || [];
 
   const items = state.trackerDefs.map(def => {
-    const logs = todayLogs.filter(l => l.defId === def.id);
-    const done = logs.length > 0;
+    const logs   = todayLogs.filter(l => l.defId === def.id);
+    const done   = logs.length > 0;
     const isOnce = def.logType === 'once';
+    const lastLog = logs[logs.length - 1];
+    const amtStr  = (lastLog?.amount && def.units) ? `${lastLog.amount} ${def.units}` : (lastLog?.amount || '');
     return `<div class="tracker-btn ${done && isOnce ? 'done-once' : ''}" onclick="tapTracker('${def.id}')">
       ${done && isOnce ? '<div class="t-check">✅</div>' : ''}
       <div class="t-icon">${def.emoji}</div>
       <div class="t-label">${def.name}</div>
-      ${!isOnce && logs.length ? `<div class="t-count">${logs.length}×</div>` : ''}
+      ${!isOnce && logs.length ? `<div class="t-count">${logs.length}×${amtStr ? ' · ' + amtStr : ''}</div>` : ''}
       ${!isOnce && !logs.length ? `<div class="t-count" style="color:var(--text3);">tap to log</div>` : ''}
     </div>`;
   }).join('');
@@ -4075,19 +4116,20 @@ function renderTrackerManage() {
     el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:4px 0;">No trackers yet. Tap ➕ above to create one.</div>';
     return;
   }
-  const today = todayKey();
+  const today     = todayKey();
   const todayLogs = state.trackerLogs[today] || [];
   el.innerHTML = state.trackerDefs.map(def => {
-    const logs = todayLogs.filter(l => l.defId === def.id);
+    const logs  = todayLogs.filter(l => l.defId === def.id);
     const badge = logs.length > 0
       ? (def.logType === 'once' ? '✅ Done' : `${logs.length}× logged`)
       : (def.logType === 'once' ? 'Not done' : 'Not logged');
     const badgeColor = logs.length > 0 ? 'var(--accent)' : 'var(--text3)';
+    const unitsStr   = def.units ? ` (${def.units})` : '';
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);">
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;">${def.emoji}</span>
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);">${def.name}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${def.name}${unitsStr}</div>
           <div style="font-size:10px;color:var(--text3);">${def.logType === 'once' ? 'Once a day' : 'Multi-log'}</div>
         </div>
       </div>
@@ -4099,11 +4141,7 @@ function renderTrackerManage() {
   }).join('');
 }
 
-// ── MOOD LOGGING ─────────────────────────────────────
-const MOOD_FACES = ['','😫','😕','😐','🙂','😄'];
-const MOOD_LABELS= ['','Rough','Poor','OK','Good','Great'];
-const ENERGY_FACES = ['','🪫','😴','⚡','🔋','🚀'];
-
+// ── MOOD ──────────────────────────────────────────────
 function selMoodLevel(el) {
   _moodLevel = parseInt(el.dataset.lvl);
   document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b === el));
@@ -4114,8 +4152,10 @@ function selMoodEnergy(el) {
 }
 
 function initMoodTime() {
+  const el = document.getElementById('mood-time-val');
+  if (!el) return;
   const now = new Date();
-  document.getElementById('mood-time-val').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  el.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 }
 
 function logMood() {
@@ -4126,12 +4166,11 @@ function logMood() {
   const timeV     = document.getElementById('mood-time-val').value;
   const note      = document.getElementById('mood-note').value.trim();
   const [hh, mm]  = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
-  const d = new Date(); const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
+  const d  = new Date();
+  const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
   const today = todayKey();
-  const entry = { id: uid(), level: _moodLevel, energy: _moodEnergy, tags, timeLabel, note, timestamp: ts };
-  state.moodLogs[today] = [...(state.moodLogs[today] || []), entry];
+  state.moodLogs[today] = [...(state.moodLogs[today] || []), { id: uid(), level: _moodLevel, energy: _moodEnergy, tags, timeLabel, note, timestamp: ts }];
   save();
-  // Reset
   _moodLevel = 0; _moodEnergy = 0;
   document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
@@ -4142,17 +4181,17 @@ function logMood() {
   showToast('😊 Mood logged!');
 }
 
-function deleteMoodLog(today, id) {
-  state.moodLogs[today] = (state.moodLogs[today] || []).filter(e => e.id !== id);
+function deleteMoodLog(dateKey, id) {
+  state.moodLogs[dateKey] = (state.moodLogs[dateKey] || []).filter(e => e.id !== id);
   save(); renderMoodLog(); renderDashboard();
 }
 
 function renderMoodLog() {
-  const ll  = document.getElementById('mood-log-list');
+  const ll   = document.getElementById('mood-log-list');
   if (!ll) return;
   const today = todayKey();
-  const logs = [...(state.moodLogs[today] || [])].sort((a,b) => a.timestamp - b.timestamp);
-  // Today strip at top
+  const logs  = [...(state.moodLogs[today] || [])].sort((a,b) => a.timestamp - b.timestamp);
+
   const strip = document.getElementById('mood-today-strip');
   if (strip && logs.length) {
     const avg = Math.round(logs.reduce((s,l) => s + l.level, 0) / logs.length);
@@ -4161,7 +4200,7 @@ function renderMoodLog() {
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;color:var(--accent);">TODAY'S MOOD</div>
         <div style="font-size:13px;color:var(--text2);">${MOOD_LABELS[avg]||'OK'} · ${logs.length} entr${logs.length===1?'y':'ies'}</div>
-        <div style="display:flex;gap:5px;margin-top:4px;">${logs.map(l => `<span style="font-size:16px;" title="${MOOD_LABELS[l.level]||''}">${MOOD_FACES[l.level]||'😐'}</span>`).join('')}</div>
+        <div style="display:flex;gap:5px;margin-top:4px;">${logs.map(l=>`<span style="font-size:16px;">${MOOD_FACES[l.level]||'😐'}</span>`).join('')}</div>
       </div>
     </div>`;
   } else if (strip) { strip.innerHTML = ''; }
@@ -4174,40 +4213,38 @@ function renderMoodLog() {
     const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
     const ampm = hh >= 12 ? 'PM' : 'AM'; const h12 = hh % 12 || 12;
     const energyStr = e.energy ? ` · Energy: ${ENERGY_FACES[e.energy]}` : '';
-    const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${e.tags.map(tag => `<span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
+    const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
     return `<div class="mood-entry-strip">
       <div class="mood-face">${MOOD_FACES[e.level]||'😐'}</div>
       <div class="mood-info">
         <div class="mood-title">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
-        <div class="mood-meta">${e.timeLabel||''}${e.note ? ' · '+e.note : ''}</div>
+        <div class="mood-meta">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>
         ${tagsStr}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
         <div class="mood-time">${h12}:${mm} ${ampm}</div>
-        <div style="font-size:13px;cursor:pointer;color:var(--text3);" onclick="deleteMoodLog('${todayKey()}','${e.id}')">✕</div>
+        <div style="font-size:13px;cursor:pointer;color:var(--text3);" onclick="deleteMoodLog('${today}','${e.id}')">✕</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── DASHBOARD CARDS ──────────────────────────────────
+// ── DASHBOARD CARDS ───────────────────────────────────
 function renderDashTrackCard() {
   const dtc = document.getElementById('dashboard-track-card');
   const dmc = document.getElementById('dashboard-mood-card');
   if (!dtc || !dmc) return;
-
-  const today = todayKey();
-
-  // Custom tracker card
+  const today     = todayKey();
   const todayLogs = state.trackerLogs[today] || [];
+
   if (state.trackerDefs.length) {
     const items = state.trackerDefs.map(def => {
-      const logs = todayLogs.filter(l => l.defId === def.id);
-      const done = logs.length > 0;
+      const logs  = todayLogs.filter(l => l.defId === def.id);
+      const done  = logs.length > 0;
       const isOnce = def.logType === 'once';
-      const badge = done ? (isOnce ? '✅' : `${logs.length}×`) : '○';
-      const col   = done ? 'var(--accent)' : 'var(--text3)';
-      return `<div style="display:flex;align-items:center;gap:5px;cursor:pointer;" onclick="showPage('track', document.querySelector('.nav-btn[onclick*=track]'))">
+      const badge  = done ? (isOnce ? '✅' : `${logs.length}×`) : '○';
+      const col    = done ? 'var(--accent)' : 'var(--text3)';
+      return `<div style="display:flex;align-items:center;gap:6px;">
         <span style="font-size:15px;">${def.emoji}</span>
         <span style="font-size:11px;font-weight:700;color:${col};">${badge}</span>
         <span style="font-size:11px;color:var(--text2);">${def.name}</span>
@@ -4215,64 +4252,58 @@ function renderDashTrackCard() {
     }).join('');
     dtc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,.2);">
       <div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers Today</div></div>
-      <div class="card-body" style="padding-top:0;display:flex;flex-direction:column;gap:6px;">${items}</div>
+      <div class="card-body" style="padding-top:0;display:flex;flex-direction:column;gap:7px;">${items}</div>
     </div>`;
   } else { dtc.innerHTML = ''; }
 
-  // Mood card
   const todayMood = state.moodLogs[today] || [];
   if (todayMood.length) {
     const latest = todayMood[todayMood.length - 1];
     const avg    = Math.round(todayMood.reduce((s,l) => s + l.level, 0) / todayMood.length);
-    const energyStr = latest.energy ? ` · ${ENERGY_FACES[latest.energy]}` : '';
-    const tagsStr   = latest.tags?.length ? ` · ${latest.tags.slice(0,3).join(', ')}` : '';
     dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.2);">
       <div class="card-header">
         <div class="card-title" style="color:var(--accent4);">😊 Mood Today</div>
-        <div style="font-size:20px;">${todayMood.map(l => MOOD_FACES[l.level]).join('')}</div>
+        <div style="font-size:20px;">${todayMood.map(l=>MOOD_FACES[l.level]).join('')}</div>
       </div>
-      <div class="card-body" style="padding-top:0;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="font-size:32px;">${MOOD_FACES[avg]||'😐'}</div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--text);">${MOOD_LABELS[avg]||'OK'}${energyStr}</div>
-            <div style="font-size:11px;color:var(--text3);">${latest.timeLabel||''}${tagsStr}</div>
-            ${latest.note ? `<div style="font-size:11px;color:var(--text3);margin-top:2px;">"${latest.note}"</div>` : ''}
-          </div>
+      <div class="card-body" style="padding-top:0;display:flex;align-items:center;gap:10px;">
+        <div style="font-size:32px;">${MOOD_FACES[avg]||'😐'}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);">${MOOD_LABELS[avg]||'OK'}${latest.energy?' · '+ENERGY_FACES[latest.energy]:''}</div>
+          <div style="font-size:11px;color:var(--text3);">${latest.timeLabel||''}${latest.tags?.length?' · '+latest.tags.slice(0,3).join(', '):''}${latest.note?' · "'+latest.note+'"':''}</div>
         </div>
       </div>
     </div>`;
   } else {
     dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.15);">
       <div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood Today</div></div>
-      <div class="card-body" style="padding-top:0;font-size:12px;color:var(--text3);">No mood logged yet. Tap <strong style="color:var(--accent4);">Track → Mood</strong> to log how you feel.</div>
+      <div class="card-body" style="padding-top:0;font-size:12px;color:var(--text3);">No mood logged. Tap <strong style="color:var(--accent4);">Track → Mood</strong> to log how you feel.</div>
     </div>`;
   }
 }
 
-// ── HISTORY INTEGRATION ──────────────────────────────
+// ── HISTORY INTEGRATION ───────────────────────────────
 function renderTrackHistoryCards(key) {
   let html = '';
-
-  // Custom tracker logs for this day
   const tLogs = state.trackerLogs[key] || [];
   if (tLogs.length) {
     const byDef = {};
     tLogs.forEach(l => { (byDef[l.defId] = byDef[l.defId] || []).push(l); });
     const rows = Object.entries(byDef).map(([defId, logs]) => {
-      const def = state.trackerDefs.find(d => d.id === defId);
-      const emoji = def ? def.emoji : '📌';
-      const name  = def ? def.name : 'Unknown';
+      const def    = state.trackerDefs.find(d => d.id === defId);
+      const emoji  = def?.emoji || '📌';
+      const name   = def?.name  || 'Unknown';
       const isOnce = def?.logType === 'once';
+      const units  = def?.units  || '';
       const detail = isOnce ? '✅ Done' : logs.map(l => {
         const t = new Date(l.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
-        return `${hh%12||12}:${mm}${hh>=12?'PM':'AM'}${l.note?' ('+l.note+')':''}`;
+        const amtStr = l.amount ? ` ${l.amount}${units?' '+units:''}` : '';
+        return `${hh%12||12}:${mm}${hh>=12?'PM':'AM'}${amtStr}${l.note?' ('+l.note+')':''}`;
       }).join(', ');
       return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
         <span style="font-size:18px;">${emoji}</span>
         <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${name}</div>
         <div style="font-size:11px;color:var(--text3);">${detail}</div></div>
-        ${isOnce ? '<span style="font-size:14px;color:var(--accent);">✅</span>' : `<span style="font-size:11px;font-weight:700;color:var(--accent);">${logs.length}×</span>`}
+        <span style="font-size:11px;font-weight:700;color:var(--accent);">${isOnce?'✅':`${logs.length}×`}</span>
       </div>`;
     }).join('');
     html += `<div class="card" style="margin-bottom:10px;border-color:rgba(0,229,160,.2);">
@@ -4280,26 +4311,20 @@ function renderTrackHistoryCards(key) {
       <div class="card-body" style="padding-top:0;">${rows}</div>
     </div>`;
   }
-
-  // Mood logs for this day
   const mLogs = [...(state.moodLogs[key] || [])].sort((a,b) => a.timestamp - b.timestamp);
   if (mLogs.length) {
+    const avg  = Math.round(mLogs.reduce((s,l)=>s+l.level,0)/mLogs.length);
     const rows = mLogs.map(e => {
       const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
-      const ampm = hh >= 12 ? 'PM' : 'AM'; const h12 = hh % 12 || 12;
-      const energyStr = e.energy ? ` · Energy ${ENERGY_FACES[e.energy]}` : '';
-      const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
+      const ampm = hh>=12?'PM':'AM'; const h12 = hh%12||12;
+      const tagsStr = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
       return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
         <div style="font-size:24px;flex-shrink:0;">${MOOD_FACES[e.level]||'😐'}</div>
-        <div style="flex:1;">
-          <div style="font-size:13px;font-weight:600;color:var(--text);">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
-          <div style="font-size:11px;color:var(--text3);">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>
-          ${tagsStr}
-        </div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${MOOD_LABELS[e.level]||'OK'}${e.energy?' · '+ENERGY_FACES[e.energy]:''}</div>
+        <div style="font-size:11px;color:var(--text3);">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>${tagsStr}</div>
         <div style="font-size:11px;color:var(--text3);flex-shrink:0;font-weight:600;">${h12}:${mm} ${ampm}</div>
       </div>`;
     }).join('');
-    const avg = Math.round(mLogs.reduce((s,l)=>s+l.level,0)/mLogs.length);
     html += `<div class="card" style="margin-bottom:10px;border-color:rgba(255,209,102,.2);">
       <div class="card-header">
         <div class="card-title" style="color:var(--accent4);">😊 Mood</div>
@@ -4308,11 +4333,9 @@ function renderTrackHistoryCards(key) {
       <div class="card-body" style="padding-top:0;">${rows}</div>
     </div>`;
   }
-
   return html;
 }
 
-// ===================== BOOT ======================
 // ===================== BOOT ======================
 init();
 </script>
@@ -4321,7 +4344,10 @@ init();
 <div class="modal-overlay" id="modal-new-tracker">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" style="color:var(--accent);">📋 New Tracker</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 14px;">
+      <div class="modal-title" style="padding:0;color:var(--accent);">📋 New Tracker</div>
+      <button class="btn btn-secondary" onclick="closeModal('modal-new-tracker')" style="font-size:13px;padding:6px 14px;">✕ Cancel</button>
+    </div>
     <div class="input-group">
       <div class="input-label">Emoji Icon</div>
       <input class="input-field" type="text" id="nt-emoji" placeholder="e.g. 💊 🚿 ☕ 📖 🧴" maxlength="4" style="font-size:22px;text-align:center;padding:10px;">
@@ -4341,6 +4367,10 @@ init();
         </div>
       </div>
     </div>
+    <div class="input-group">
+      <div class="input-label">Units (optional)</div>
+      <input class="input-field" type="text" id="nt-units" placeholder="e.g. mg, cups, mins, oz, pills">
+    </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveNewTracker()" style="flex:1;">Add Tracker</button>
     </div>
@@ -4348,11 +4378,15 @@ init();
   </div>
 </div>
 
-<!-- LOG TRACKER NOTE MODAL (for multi-log items with optional note) -->
+<!-- LOG TRACKER ENTRY MODAL -->
 <div class="modal-overlay" id="modal-log-tracker">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="log-tracker-title" style="color:var(--accent);">Log Entry</div>
+    <div class="input-group" id="log-tracker-amount-group">
+      <div class="input-label" id="log-tracker-amount-label">Amount</div>
+      <input class="input-field" type="number" id="log-tracker-amount" placeholder="e.g. 1" min="0" step="any" style="font-size:15px;">
+    </div>
     <div class="input-group">
       <div class="input-label">Note (optional)</div>
       <input class="input-field" type="text" id="log-tracker-note" placeholder="Add a note...">
@@ -4363,6 +4397,7 @@ init();
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="confirmLogTracker()" style="flex:1;">Log It</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-log-tracker')" style="flex:1;">Cancel</button>
     </div>
     <div style="height:8px;"></div>
   </div>
