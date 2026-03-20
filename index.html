@@ -230,7 +230,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .water-bar-wrap { flex:1; height:8px; background:rgba(0,184,255,0.1); border-radius:4px; overflow:hidden; border:1px solid rgba(0,184,255,0.15); }
   .water-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#00b8ff,#0070ff); transition:width 0.5s ease; }
   .water-oz-display { font-family:'DM Mono',monospace; font-size:12px; color:var(--accent2); white-space:nowrap; }
-  .water-quick-btns { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:12px; }
+  .water-quick-btns { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
   .water-quick-btn { background:rgba(0,184,255,0.08); border:1px solid rgba(0,184,255,0.2); border-radius:var(--radius-sm); padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.2s; color:var(--accent2); font-size:12px; font-weight:700; }
   .water-quick-btn:active { background:rgba(0,184,255,0.2); transform:scale(0.95); }
   .water-quick-btn-sub { font-size:9px; color:var(--text3); font-weight:400; margin-top:2px; }
@@ -389,7 +389,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
 
   /* ── TRACK PAGE ──────────────────────────────────────────── */
   .tracker-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:14px; }
-  .tracker-btn { border-radius:var(--radius); padding:14px 8px 10px; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--surface); box-shadow:0 2px 10px rgba(0,0,0,.2); transition:all .18s; display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
+  .tracker-btn { border-radius:var(--radius); padding:14px 8px 10px; text-align:center; cursor:pointer; border:1px solid var(--border); background:var(--surface); transition:all .18s; display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
   .tracker-btn:active { transform:scale(.94); }
   .tracker-btn.done-once { border-color:var(--accent); background:rgba(0,229,160,.08); }
   .tracker-btn .t-icon  { font-size:26px; line-height:1; }
@@ -398,7 +398,6 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   .tracker-btn .t-check { position:absolute; top:6px; right:6px; font-size:13px; }
   .tracker-add-btn { border-radius:var(--radius); padding:14px 8px; text-align:center; cursor:pointer; border:2px dashed var(--border); background:transparent; display:flex; flex-direction:column; align-items:center; gap:5px; color:var(--text3); font-size:11px; font-weight:700; transition:all .18s; }
   .tracker-add-btn:active { border-color:var(--accent); color:var(--accent); }
-  /* MOOD */
   .mood-level-row { display:flex; gap:8px; justify-content:center; margin-bottom:14px; }
   .mood-level-btn { width:50px; height:56px; border-radius:var(--radius-sm); border:2px solid var(--border); background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; transition:all .18s; }
   .mood-level-btn .ml-emoji { font-size:20px; line-height:1; }
@@ -588,11 +587,10 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         </div>
         <div class="section-label">Quick Add</div>
         <div class="water-quick-btns">
-          <div class="water-quick-btn" onclick="addWater(4)">+4 oz<div class="water-quick-btn-sub">½ cup</div></div>
           <div class="water-quick-btn" onclick="addWater(8)">+8 oz<div class="water-quick-btn-sub">1 cup</div></div>
+          <div class="water-quick-btn" onclick="addWater(12)">+12 oz<div class="water-quick-btn-sub">Small</div></div>
           <div class="water-quick-btn" onclick="addWater(16)">+16 oz<div class="water-quick-btn-sub">Medium</div></div>
           <div class="water-quick-btn" onclick="addWater(24)">+24 oz<div class="water-quick-btn-sub">Large</div></div>
-          <div class="water-quick-btn" onclick="addWater(30)">+30 oz<div class="water-quick-btn-sub">XL</div></div>
         </div>
         <div class="card" style="margin-bottom:12px;">
           <div class="card-header"><div class="card-title">Custom Amount</div></div>
@@ -932,18 +930,14 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
         <div class="tab active" id="ttab-custom" onclick="switchTrackTab('custom',this)">📋 My Trackers</div>
         <div class="tab" id="ttab-mood" onclick="switchTrackTab('mood',this)">😊 Mood</div>
       </div>
-
-      <!-- CUSTOM TRACKERS SUB-TAB -->
+      <!-- CUSTOM TRACKERS -->
       <div id="track-custom-view">
         <div id="tracker-grid-wrap" class="tracker-grid"></div>
         <div class="section-label">Manage Trackers</div>
-        <div class="card">
-          <div class="card-body" id="tracker-manage-list" style="padding-top:14px;"></div>
-        </div>
+        <div class="card"><div class="card-body" id="tracker-manage-list" style="padding-top:14px;"></div></div>
         <div style="height:80px;"></div>
       </div>
-
-      <!-- MOOD SUB-TAB -->
+      <!-- MOOD -->
       <div id="track-mood-view" style="display:none;">
         <div id="mood-today-strip" style="margin-bottom:12px;"></div>
         <div class="card" style="margin-bottom:12px;">
@@ -1976,10 +1970,10 @@ function renderHistory() {
     const hasFood = (state.log[key] || []).length > 0;
     const hasWater = (state.water[key] || []).length > 0;
     const hasBath = (state.bathroom[key] || []).length > 0;
-    const hasWorkout = (state.workouts[key] || []).length > 0;
-    const hasWeight  = (state.weights[key]  || []).length > 0;
-    const hasTracker = (state.trackerLogs[key] || []).length > 0;
-    const hasMood    = (state.moodLogs[key]    || []).length > 0;
+    const hasWorkout  = (state.workouts[key]    || []).length > 0;
+    const hasWeight   = (state.weights[key]     || []).length > 0;
+    const hasTracker  = (state.trackerLogs[key] || []).length > 0;
+    const hasMood     = (state.moodLogs[key]    || []).length > 0;
     const hasData = hasFood || hasWater || hasBath || hasWorkout || hasWeight || hasTracker || hasMood;
     const isToday = key === today;
     const isFuture = new Date(m.getFullYear(), m.getMonth(), d) > todayDate;
@@ -2201,7 +2195,6 @@ function renderHistoryDayDetail(key) {
 
 function renderSavedFoods() {
   const hl = document.getElementById('history-list');
-  // Show/hide toolbar
   const tb = document.getElementById('saved-foods-toolbar');
   if (tb) tb.style.display = state.readOnly ? 'none' : '';
   if (!state.savedFoods.length) {
@@ -2216,8 +2209,8 @@ function renderSavedFoods() {
         <div style="font-size:11px;color:var(--text3);">${Math.round(f.baseNutrients.calories||0)} cal · ${Math.round(f.baseNutrients.protein||0)}g P · ${Math.round(f.baseNutrients.totalCarbs||0)}g C · ${Math.round(f.baseNutrients.totalFat||0)}g F</div>
       </div>
       ${state.readOnly ? '' : `<div style="display:flex;gap:8px;align-items:center;">
-        <div style="font-size:12px;color:var(--accent2);font-weight:700;cursor:pointer;padding:4px 8px;border:1px solid rgba(0,184,255,0.3);border-radius:6px;" onclick="openEditSavedFood('${f.id}')">✏️ Edit</div>
-        <div style="font-size:12px;color:var(--text3);cursor:pointer;padding:4px;" onclick="deleteSavedFood('${f.id}')">✕</div>
+        <div style="font-size:12px;color:var(--accent2);font-weight:700;cursor:pointer;padding:4px 8px;border:1px solid rgba(0,184,255,0.3);border-radius:6px;white-space:nowrap;" onclick="openEditSavedFood('${f.id}')">✏️ Edit</div>
+        <div style="font-size:14px;cursor:pointer;color:var(--text3);padding:4px;" onclick="deleteSavedFood('${f.id}')">✕</div>
       </div>`}
     </div>`).join('');
 }
@@ -2230,12 +2223,6 @@ function reuseFood(entryId, dateKey) {
   openAddFood(); showFoodForm(); populateFormPreview();
 }
 
-function quickAddFood(savedId) {
-  const f = state.savedFoods.find(sf => sf.id === savedId);
-  if (!f) return;
-  state.currentFood = f; state.portionMultiplier = 1.0;
-  openAddFood(); showFoodForm(); populateFormPreview();
-}
 
 function deleteSavedFood(id) {
   if (!confirm('Remove this food from My Foods?')) return;
@@ -2245,12 +2232,12 @@ function deleteSavedFood(id) {
 }
 
 function openAddSavedFood() {
-  // Open the edit modal pre-populated with blank nutrients for a brand-new saved food
-  const blankNutrients = {};
-  const NUTRIENTS_KEY_LOCAL = ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat','cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein','vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'];
-  NUTRIENTS_KEY_LOCAL.forEach(k => blankNutrients[k] = 0);
-  const tempFood = { id: '__new__', name: '', emoji: randEmoji(), baseNutrients: blankNutrients };
-  openSavedFoodEditor(tempFood, true);
+  const blank = {};
+  ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat',
+   'cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein',
+   'vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'
+  ].forEach(k => blank[k] = 0);
+  openSavedFoodEditor({ id: '__new__', name: '', emoji: randEmoji(), baseNutrients: blank }, true);
 }
 
 function openEditSavedFood(id) {
@@ -2263,12 +2250,9 @@ function openSavedFoodEditor(food, isNew) {
   const bn = food.baseNutrients || {};
   const sections = [
     { title: '🔥 Calories & Macros', keys: ['calories','protein','totalCarbs','totalFat','dietaryFiber','totalSugars','addedSugars','sodium','cholesterol','saturatedFat','transFat'] },
-    { title: '💊 Vitamins', keys: ['vitaminA','vitaminC','vitaminD','vitaminB12'] },
-    { title: '⚡ Minerals', keys: ['calcium','iron','potassium','magnesium','zinc'] },
+    { title: '💊 Vitamins',          keys: ['vitaminA','vitaminC','vitaminD','vitaminB12'] },
+    { title: '⚡ Minerals',           keys: ['calcium','iron','potassium','magnesium','zinc'] },
   ];
-  const NUTRIENTS_LABEL_L = { calories:'Calories', totalFat:'Total Fat', saturatedFat:'Sat. Fat', transFat:'Trans Fat', polyunsaturatedFat:'Poly Fat', monounsaturatedFat:'Mono Fat', cholesterol:'Cholesterol', sodium:'Sodium', totalCarbs:'Total Carbs', dietaryFiber:'Fiber', totalSugars:'Total Sugars', addedSugars:'Added Sugars', protein:'Protein', vitaminD:'Vitamin D', calcium:'Calcium', iron:'Iron', potassium:'Potassium', vitaminA:'Vitamin A', vitaminC:'Vitamin C', vitaminB12:'B12', magnesium:'Magnesium', zinc:'Zinc' };
-  const NUTRIENTS_UNIT_L  = { calories:'cal', totalFat:'g', saturatedFat:'g', transFat:'g', polyunsaturatedFat:'g', monounsaturatedFat:'g', cholesterol:'mg', sodium:'mg', totalCarbs:'g', dietaryFiber:'g', totalSugars:'g', addedSugars:'g', protein:'g', vitaminD:'mcg', calcium:'mg', iron:'mg', potassium:'mg', vitaminA:'mcg', vitaminC:'mg', vitaminB12:'mcg', magnesium:'mg', zinc:'mg' };
-
   const formBody = document.getElementById('edit-form-body');
   formBody.innerHTML = `
     <div class="input-group">
@@ -2283,12 +2267,12 @@ function openSavedFoodEditor(food, isNew) {
       <div class="ne-section-title">${sec.title}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px;margin-bottom:8px;">
         ${sec.keys.map(k => `<div>
-          <div class="input-label" style="margin-bottom:4px;">${NUTRIENTS_LABEL_L[k]||k} <span style="color:var(--text3);font-weight:400;">(${NUTRIENTS_UNIT_L[k]||''})</span></div>
+          <div class="input-label" style="margin-bottom:4px;">${NUTRIENTS_LABEL[k]||k} <span style="color:var(--text3);font-weight:400;">(${NUTRIENTS_UNIT[k]||''})</span></div>
           <input class="input-field nu-input" type="number" id="esf-${k}" value="${+(bn[k]||0).toFixed(2)}" placeholder="0" min="0" style="font-size:14px;padding:10px 12px;" onfocus="nuFocus(this)" onblur="nuBlur(this)">
         </div>`).join('')}
       </div>`).join('')}
     <div class="btn-row" style="margin-top:16px;">
-      <button class="btn btn-primary" onclick="saveSavedFoodEdit('${food.id}','${isNew}')" style="flex:1;">${isNew ? 'Add to My Foods' : 'Save Changes'}</button>
+      <button class="btn btn-primary" onclick="saveSavedFoodEdit('${food.id}',${isNew})" style="flex:1;">${isNew ? 'Add to My Foods' : 'Save Changes'}</button>
       ${!isNew ? `<button class="btn btn-danger" onclick="deleteSavedFood('${food.id}');closeModal('modal-edit');" style="flex:1;">Delete</button>` : ''}
     </div>
     <div style="height:24px;"></div>`;
@@ -2299,25 +2283,27 @@ function saveSavedFoodEdit(id, isNew) {
   const name = document.getElementById('esf-name').value.trim();
   if (!name) { showToast('Enter a food name'); return; }
   const emoji = document.getElementById('esf-emoji').value.trim() || '🍽️';
-  const allKeys = ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat','cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein','vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'];
+  const allKeys = ['calories','totalFat','saturatedFat','transFat','polyunsaturatedFat','monounsaturatedFat',
+    'cholesterol','sodium','totalCarbs','dietaryFiber','totalSugars','addedSugars','protein',
+    'vitaminD','calcium','iron','potassium','vitaminA','vitaminC','vitaminB12','magnesium','zinc'];
   const nutrients = {};
-  allKeys.forEach(k => {
-    const el = document.getElementById('esf-' + k);
-    nutrients[k] = el ? parseFloat(el.value) || 0 : 0;
-  });
-  if (isNew === 'true' || id === '__new__') {
+  allKeys.forEach(k => { const el = document.getElementById('esf-'+k); nutrients[k] = el ? parseFloat(el.value)||0 : 0; });
+  if (isNew) {
     state.savedFoods.unshift({ id: uid(), name, emoji, baseNutrients: nutrients });
     showToast('✅ ' + name + ' added to My Foods!');
   } else {
     const idx = state.savedFoods.findIndex(f => f.id === id);
-    if (idx >= 0) {
-      state.savedFoods[idx] = { ...state.savedFoods[idx], name, emoji, baseNutrients: nutrients };
-    }
+    if (idx >= 0) state.savedFoods[idx] = { ...state.savedFoods[idx], name, emoji, baseNutrients: nutrients };
     showToast('✅ ' + name + ' updated!');
   }
-  save();
-  closeModal('modal-edit');
-  renderSavedFoods();
+  save(); closeModal('modal-edit'); renderSavedFoods();
+}
+
+function quickAddFood(savedId) {
+  const f = state.savedFoods.find(sf => sf.id === savedId);
+  if (!f) return;
+  state.currentFood = f; state.portionMultiplier = 1.0;
+  openAddFood(); showFoodForm(); populateFormPreview();
 }
 
 // ===================== WATER =====================
@@ -2528,7 +2514,8 @@ function openBathroomModal(type, editId) {
     ${!isPee ? `
     <div class="input-group" style="padding:0 20px;margin-top:16px;margin-bottom:4px;">
       <div class="input-label">Notes (optional)</div>
-      <textarea class="input-field" id="bath-notes-input" rows="3" placeholder="e.g. saw blood, straining, loose, urgent..."
+      <textarea class="input-field" id="bath-notes-input" rows="3"
+        placeholder="e.g. saw blood, straining, loose, urgent..."
         style="resize:none;font-size:14px;line-height:1.5;">${existingNote}</textarea>
     </div>` : ''}
 
@@ -3092,146 +3079,550 @@ function offProductToFood(p) {
 // ===================== OFFLINE FOOD DATABASE =====================
 // ~200 common foods + drinks with accurate per-serving nutrition
 const OFFLINE_DB = [
-  // format: [name, cal, fat, satFat, chol, sodium, carbs, fiber, sugars, protein, vitC, vitD, calcium, iron, potassium, servingNote]
-  // Drinks
+  // ── DRINKS ──────────────────────────────────────────────────────────────
   ['BodyArmor Lyte (16 fl oz)',20,0,0,0,40,5,0,4,0,100,0,20,0,50,'16 fl oz'],
   ['BodyArmor Sport (16 fl oz)',90,0,0,0,30,24,0,23,0,100,0,20,0,50,'16 fl oz'],
   ['Gatorade (20 fl oz)',130,0,0,0,270,36,0,34,0,0,0,0,0,75,'20 fl oz'],
+  ['Gatorade Zero (20 fl oz)',10,0,0,0,270,3,0,0,0,0,0,0,0,75,'20 fl oz'],
   ['Powerade (20 fl oz)',130,0,0,0,220,35,0,34,0,0,0,0,0,0,'20 fl oz'],
   ['Prime Hydration (16.9 fl oz)',25,0,0,0,10,5,0,2,2,0,0,0,0,700,'16.9 fl oz'],
   ['Celsius Energy Drink (12 fl oz)',10,0,0,0,0,2,0,0,0,60,0,50,0,0,'12 fl oz'],
   ['Monster Energy (16 fl oz)',200,0,0,0,360,54,0,54,2,0,0,0,0,0,'16 fl oz'],
+  ['Monster Zero (16 fl oz)',10,0,0,0,360,3,0,2,1,0,0,0,0,0,'16 fl oz'],
   ['Red Bull (8.4 fl oz)',110,0,0,0,100,28,0,27,1,0,0,0,0,0,'8.4 fl oz'],
+  ['Red Bull Sugar Free (8.4 fl oz)',10,0,0,0,100,3,0,3,1,0,0,0,0,0,'8.4 fl oz'],
   ['Coca-Cola (12 fl oz)',140,0,0,0,45,39,0,39,0,0,0,0,0,0,'12 fl oz'],
   ['Diet Coke (12 fl oz)',0,0,0,0,40,0,0,0,0,0,0,0,0,0,'12 fl oz'],
+  ['Coke Zero (12 fl oz)',0,0,0,0,40,0,0,0,0,0,0,0,0,0,'12 fl oz'],
+  ['Pepsi (12 fl oz)',150,0,0,0,30,41,0,41,0,0,0,0,0,0,'12 fl oz'],
+  ['Diet Pepsi (12 fl oz)',0,0,0,0,35,0,0,0,0,0,0,0,0,0,'12 fl oz'],
   ['Sprite (12 fl oz)',140,0,0,0,65,38,0,38,0,0,0,0,0,0,'12 fl oz'],
+  ['Mountain Dew (12 fl oz)',170,0,0,0,60,46,0,46,0,0,0,0,0,0,'12 fl oz'],
+  ['Dr Pepper (12 fl oz)',150,0,0,0,55,40,0,40,0,0,0,0,0,0,'12 fl oz'],
   ['Orange Juice (8 fl oz)',110,0,0,0,0,26,0,21,2,124,0,27,0,496,'8 fl oz'],
   ['Apple Juice (8 fl oz)',120,0,0,0,10,29,0,24,0,3,0,17,0,295,'8 fl oz'],
+  ['Grape Juice (8 fl oz)',150,0,0,0,15,37,0,36,1,0,0,16,0,260,'8 fl oz'],
+  ['Cranberry Juice (8 fl oz)',110,0,0,0,5,28,0,26,0,23,0,16,0,195,'8 fl oz'],
+  ['Lemonade (8 fl oz)',100,0,0,0,15,26,0,25,0,7,0,4,0,40,'8 fl oz'],
   ['Whole Milk (8 fl oz)',150,8,5,35,120,12,0,12,8,0,3,300,0,380,'8 fl oz'],
   ['2% Milk (8 fl oz)',120,5,3,20,115,12,0,12,8,0,3,300,0,380,'8 fl oz'],
+  ['1% Milk (8 fl oz)',100,2.5,1.5,12,120,12,0,12,8,0,3,300,0,380,'8 fl oz'],
   ['Skim Milk (8 fl oz)',80,0,0,5,130,12,0,12,8,0,3,300,0,380,'8 fl oz'],
+  ['Chocolate Milk (8 fl oz)',190,8,5,30,150,27,1,25,8,0,3,300,1,420,'8 fl oz'],
   ['Almond Milk, Unsweetened (8 fl oz)',30,2.5,0,0,150,1,1,0,1,0,2,450,1,160,'8 fl oz'],
+  ['Almond Milk, Original (8 fl oz)',60,2.5,0,0,150,8,1,7,1,0,2,450,1,160,'8 fl oz'],
+  ['Oat Milk (8 fl oz)',120,5,0.5,0,125,16,2,7,3,0,2,350,0,390,'8 fl oz'],
+  ['Soy Milk (8 fl oz)',80,4,0.5,0,95,7,1,6,7,0,3,300,1,280,'8 fl oz'],
+  ['Coconut Milk Beverage (8 fl oz)',45,4.5,4,0,45,2,0,2,0,0,1,100,0,40,'8 fl oz'],
   ['Coffee, Black (8 fl oz)',5,0,0,0,5,0,0,0,0,0,0,5,0,116,'8 fl oz'],
+  ['Coffee with Cream & Sugar (8 fl oz)',70,3,2,10,15,10,0,10,1,0,0,20,0,80,'8 fl oz'],
   ['Starbucks Latte (16 fl oz)',190,7,4.5,25,170,19,0,18,13,0,0,350,0,0,'16 fl oz'],
+  ['Starbucks Frappuccino, Mocha (16 fl oz)',420,15,10,50,270,66,0,61,6,0,0,150,0,0,'16 fl oz'],
+  ['Starbucks Cold Brew (12 fl oz)',5,0,0,0,15,0,0,0,1,0,0,10,0,0,'12 fl oz'],
+  ['Espresso (2 fl oz)',10,0,0,0,5,2,0,0,0,0,0,5,0,0,'2 fl oz (double)'],
+  ['Green Tea (8 fl oz)',2,0,0,0,0,0,0,0,0,0,0,5,0,20,'8 fl oz'],
+  ['Black Tea (8 fl oz)',2,0,0,0,0,0,0,0,0,0,0,5,0,20,'8 fl oz'],
+  ['Sweet Tea (8 fl oz)',80,0,0,0,5,21,0,21,0,0,0,0,0,30,'8 fl oz'],
+  ['Sports Water / Smartwater (1 bottle)',0,0,0,0,10,0,0,0,0,0,0,0,0,0,'16.9 fl oz'],
   ['Water (8 fl oz)',0,0,0,0,0,0,0,0,0,0,0,0,0,0,'8 fl oz'],
-  // Proteins
+  ['Sparkling Water (12 fl oz)',0,0,0,0,35,0,0,0,0,0,0,0,0,0,'12 fl oz'],
+  ['Topo Chico (12 fl oz)',0,0,0,0,10,0,0,0,0,0,0,0,0,0,'12 fl oz'],
+  ['LaCroix (12 fl oz)',0,0,0,0,0,0,0,0,0,0,0,0,0,0,'12 fl oz'],
+  ['Protein Shake, Fairlife (1 bottle)',150,2.5,1,10,280,8,0,6,30,0,0,500,0,0,'11.5 fl oz'],
+  ['Premier Protein Shake (1 bottle)',160,3,1,15,390,5,1,2,30,0,0,450,3,210,'11.5 fl oz'],
+
+  // ── PROTEINS ────────────────────────────────────────────────────────────
   ['Chicken Breast, Grilled (4 oz)',185,4,1,85,75,0,0,0,35,0,0,15,1,320,'4 oz'],
+  ['Chicken Breast, Baked (3 oz)',140,3,1,65,60,0,0,0,26,0,0,10,1,240,'3 oz'],
+  ['Chicken Breast, Fried (4 oz)',270,13,3,85,430,8,0,0,30,0,0,15,1,280,'4 oz'],
   ['Chicken Thigh, Grilled (4 oz)',215,12,3,105,90,0,0,0,26,0,0,12,1,295,'4 oz'],
+  ['Chicken Thigh, Fried (4 oz)',295,18,5,120,490,8,0,0,28,0,0,12,1,270,'4 oz'],
+  ['Chicken Drumstick (2 pieces)',265,14,4,130,200,0,0,0,32,0,0,16,1,340,'2 drumsticks'],
+  ['Chicken Wings (3 pieces)',220,15,4,80,490,0,0,0,22,0,0,12,1,200,'3 wings'],
+  ['Rotisserie Chicken, Breast (4 oz)',185,7,2,90,440,0,0,0,28,0,0,15,1,300,'4 oz'],
   ['Ground Beef 80/20 (4 oz)',305,20,8,85,75,0,0,0,28,0,0,10,2,310,'4 oz'],
+  ['Ground Beef 90/10 (4 oz)',215,11,4,85,75,0,0,0,28,0,0,10,2,310,'4 oz'],
   ['Ground Beef 93% Lean (4 oz)',195,9,4,85,75,0,0,0,28,0,0,10,2,310,'4 oz'],
+  ['Beef, Ground Turkey (4 oz)',170,9,2.5,90,75,0,0,0,22,0,0,20,1,290,'4 oz'],
   ['Steak, Sirloin (4 oz)',220,10,4,90,65,0,0,0,32,0,0,20,2,380,'4 oz'],
+  ['Steak, Ribeye (4 oz)',310,22,9,90,70,0,0,0,28,0,0,15,2,310,'4 oz'],
+  ['Steak, NY Strip (4 oz)',240,13,5,90,65,0,0,0,30,0,0,18,2,370,'4 oz'],
+  ['Steak, Filet Mignon (4 oz)',220,11,4,85,55,0,0,0,30,0,0,15,2,340,'4 oz'],
+  ['Steak, Flank (4 oz)',210,9,4,80,65,0,0,0,30,0,0,15,2,360,'4 oz'],
+  ['Burger Patty (4 oz)',290,19,7,80,80,0,0,0,26,0,0,10,2,300,'4 oz'],
+  ['Pork Chop, Grilled (4 oz)',210,10,3.5,80,65,0,0,0,28,0,0,15,1,380,'4 oz'],
+  ['Pork Tenderloin (4 oz)',185,5,1.5,80,60,0,0,0,30,0,0,12,1,410,'4 oz'],
+  ['Bacon (3 slices)',130,10,3.5,30,540,0,0,0,9,0,0,4,0,140,'3 slices'],
+  ['Turkey Bacon (3 slices)',70,4.5,1.5,40,390,1,0,0,6,0,0,4,0,110,'3 slices'],
+  ['Ham, Deli Sliced (2 oz)',60,2,1,30,570,2,0,2,9,0,0,4,0,150,'2 oz'],
+  ['Sausage, Breakfast (2 links)',180,16,6,35,340,1,0,0,7,0,0,15,1,160,'2 links'],
+  ['Italian Sausage (1 link)',290,23,8,65,750,3,0,1,14,0,0,20,1,280,'1 link'],
   ['Salmon, Atlantic (4 oz)',235,14,3,80,60,0,0,0,25,0,16,15,0,430,'4 oz'],
+  ['Salmon, Canned (3 oz)',130,5,1,60,340,0,0,0,20,0,12,180,1,360,'3 oz'],
   ['Tuna, Canned in Water (3 oz)',100,0.5,0,25,230,0,0,0,22,0,0,10,1,200,'3 oz'],
-  ['Shrimp (4 oz)',120,2,0,190,220,1,0,0,23,0,0,70,1,220,'4 oz'],
+  ['Tuna, Canned in Oil (3 oz)',170,8,1.5,40,300,0,0,0,24,0,0,10,1,175,'3 oz'],
+  ['Tuna Steak (4 oz)',165,1.5,0.5,60,45,0,0,0,34,0,0,10,1,420,'4 oz'],
   ['Tilapia (4 oz)',110,2.5,1,55,60,0,0,0,23,0,0,10,0,380,'4 oz'],
+  ['Shrimp (4 oz)',120,2,0,190,220,1,0,0,23,0,0,70,1,220,'4 oz'],
+  ['Shrimp, Fried (6 pieces)',180,10,2,115,450,9,0,0,14,0,0,60,1,180,'6 pieces'],
+  ['Cod (4 oz)',105,1,0,55,100,0,0,0,23,2,0,20,0,480,'4 oz'],
+  ['Halibut (4 oz)',125,2.5,0.5,55,70,0,0,0,24,0,0,55,0,520,'4 oz'],
+  ['Mahi Mahi (4 oz)',125,1,0,95,120,0,0,0,27,0,0,20,1,520,'4 oz'],
+  ['Catfish (4 oz)',150,8,2,65,75,0,0,0,18,1,12,10,0,350,'4 oz'],
+  ['Crab (3 oz)',85,1,0,85,275,0,0,0,17,3,0,45,0,240,'3 oz'],
+  ['Lobster (3 oz)',80,0.5,0,80,330,0,0,0,17,0,0,70,0,250,'3 oz'],
+  ['Scallops (3 oz)',90,1,0,30,275,5,0,0,17,0,0,20,0,260,'3 oz'],
   ['Turkey Breast (4 oz)',150,1,0,70,55,0,0,0,34,0,0,20,1,350,'4 oz'],
+  ['Turkey, Ground (4 oz)',170,9,2.5,90,75,0,0,0,22,0,0,20,1,290,'4 oz'],
+  ['Turkey, Sliced Deli (2 oz)',60,1,0,25,450,2,0,1,11,0,0,8,1,180,'2 oz'],
   ['Eggs, Large (1 egg)',70,5,1.5,185,70,0,0,0,6,0,1,25,1,70,'1 egg'],
+  ['Eggs, Scrambled (2 eggs)',180,14,4,380,180,2,0,1,12,0,2,60,2,150,'2 eggs'],
   ['Egg Whites (3 whites)',50,0,0,0,165,1,0,0,11,0,0,5,0,160,'3 whites'],
-  ['Greek Yogurt, Plain (3/4 cup)',100,0,0,5,60,6,0,4,18,0,0,200,0,250,'3/4 cup'],
-  ['Cottage Cheese (1/2 cup)',110,5,3,25,380,4,0,3,13,0,0,100,0,100,'1/2 cup'],
+  ['Hard Boiled Egg (1 egg)',77,5,1.5,186,62,1,0,1,6,0,1,25,1,63,'1 egg'],
+  ['Greek Yogurt, Plain Nonfat (3/4 cup)',100,0,0,5,60,6,0,4,18,0,0,200,0,250,'3/4 cup'],
+  ['Greek Yogurt, 2% (3/4 cup)',130,3.5,2.5,15,60,7,0,5,15,0,0,180,0,240,'3/4 cup'],
+  ['Greek Yogurt, Flavored (3/4 cup)',160,0,0,5,65,22,0,19,14,0,0,150,0,200,'3/4 cup'],
+  ['Regular Yogurt, Plain (1 cup)',150,8,5,30,120,17,0,17,9,2,2,300,0,380,'1 cup'],
+  ['Cottage Cheese, Low-Fat (1/2 cup)',80,1,0.5,10,360,5,0,4,14,0,0,100,0,100,'1/2 cup'],
+  ['Cottage Cheese, Full-Fat (1/2 cup)',110,5,3,25,380,4,0,3,13,0,0,100,0,100,'1/2 cup'],
   ['Protein Shake, Whey (1 scoop)',130,3,1.5,65,160,5,1,3,25,0,0,130,1,160,'1 scoop'],
-  // Grains & Carbs
+  ['Protein Bar, Quest (1 bar)',190,7,4,5,250,22,14,2,20,0,0,150,2,120,'1 bar'],
+  ['Protein Bar, Kind (1 bar)',200,12,2.5,0,120,22,7,8,12,0,0,0,2,150,'1 bar'],
+  ['Protein Bar, RX Bar (1 bar)',210,9,2,0,160,24,4,14,12,0,0,40,2,280,'1 bar'],
+  ['Deli Roast Beef (2 oz)',70,2,1,30,340,2,0,0,12,0,0,4,1,150,'2 oz'],
+
+  // ── GRAINS & CARBS ──────────────────────────────────────────────────────
   ['White Rice, Cooked (1 cup)',205,0,0,0,0,45,0,0,4,0,0,15,2,55,'1 cup'],
   ['Brown Rice, Cooked (1 cup)',215,2,0,0,10,45,4,0,5,0,0,20,1,83,'1 cup'],
+  ['Jasmine Rice, Cooked (1 cup)',205,0,0,0,0,45,0,0,4,0,0,15,2,55,'1 cup'],
+  ['Wild Rice, Cooked (1 cup)',165,0.5,0,0,5,35,3,1,7,0,0,5,2,165,'1 cup'],
+  ['Fried Rice (1 cup)',335,12,2,115,560,50,2,2,9,3,0,20,1,150,'1 cup'],
   ['Oatmeal, Cooked (1 cup)',155,3,0.5,0,105,27,4,1,5,0,0,20,2,165,'1 cup'],
-  ['White Bread (2 slices)',140,2,0,0,270,26,1,3,5,0,0,100,2,50,'2 slices'],
-  ['Whole Wheat Bread (2 slices)',140,2,0,0,220,24,3,3,6,0,0,60,2,90,'2 slices'],
+  ['Overnight Oats (1 cup)',300,7,2,10,120,50,6,12,10,2,2,200,3,350,'1 cup'],
+  ['Granola (1/2 cup)',230,9,1,0,80,34,3,12,6,0,0,30,2,210,'1/2 cup'],
+  ['Grits, Cooked (1 cup)',145,0.5,0,0,270,31,1,0,3,0,0,3,1,55,'1 cup'],
+  ['Cream of Wheat (1 cup)',130,0.5,0,0,180,27,1,0,4,0,0,190,9,50,'1 cup'],
+  ['White Bread (1 slice)',80,1,0,0,150,15,1,2,3,0,0,50,1,30,'1 slice'],
+  ['White Bread (2 slices)',160,2,0,0,300,30,1,4,6,0,0,100,2,60,'2 slices'],
+  ['Whole Wheat Bread (1 slice)',80,1,0,0,135,15,2,2,4,0,0,30,1,70,'1 slice'],
+  ['Whole Wheat Bread (2 slices)',160,2,0,0,270,30,4,4,8,0,0,60,2,140,'2 slices'],
+  ['Sourdough Bread (1 slice)',90,0.5,0,0,210,18,1,1,4,0,0,20,1,60,'1 slice'],
+  ['Ezekiel Bread (1 slice)',80,0.5,0,0,75,15,3,0,4,0,0,30,1,80,'1 slice'],
+  ['Bagel, Plain (1 medium)',270,1,0,0,440,55,2,6,11,0,0,60,3,105,'1 medium'],
+  ['Bagel, Everything (1 medium)',270,1.5,0,0,520,55,2,7,11,0,0,60,4,110,'1 medium'],
+  ['English Muffin (1)',130,1,0,0,200,25,2,3,5,0,0,100,2,75,'1 muffin'],
+  ['Pita Bread, White (1 small)',165,1,0,0,320,33,1,1,6,0,0,55,1,72,'1 small'],
+  ['Pita Bread, Whole Wheat (1)',170,2,0,0,340,35,5,1,6,0,0,55,2,100,'1 small'],
+  ['Croissant (1 medium)',230,12,7,50,310,26,2,6,5,0,0,20,1,70,'1 medium'],
+  ['Biscuit (1)',220,10,3,2,560,28,1,3,4,0,0,60,2,90,'1 biscuit'],
+  ['Tortilla Flour 10in (1)',220,5,2,0,440,38,2,2,6,0,0,60,2,75,'1 large'],
+  ['Tortilla Flour 8in (1)',160,4,1.5,0,310,27,2,1,4,0,0,40,1,55,'1 medium'],
+  ['Tortilla Flour 6in (1)',110,3,1,0,210,19,1,1,3,0,0,30,1,40,'1 small'],
+  ['Tortilla Corn 6in (2)',100,2,0,0,10,22,3,0,2,0,0,40,1,60,'2 small'],
   ['Pasta, Cooked (1 cup)',220,1,0,0,0,43,3,1,8,0,0,10,2,43,'1 cup'],
+  ['Spaghetti, Cooked (1 cup)',220,1,0,0,0,43,3,1,8,0,0,10,2,43,'1 cup'],
+  ['Penne, Cooked (1 cup)',220,1,0,0,0,43,3,1,8,0,0,10,2,43,'1 cup'],
+  ['Pasta, Whole Wheat (1 cup)',180,1,0,0,0,39,5,2,8,0,0,20,2,123,'1 cup'],
   ['Potato, Baked (1 medium)',160,0,0,0,10,37,4,2,4,28,0,26,2,926,'1 medium'],
   ['Sweet Potato, Baked (1 medium)',100,0,0,0,40,23,4,7,2,20,0,40,1,440,'1 medium'],
-  ['Tortilla, Flour 10" (1)',220,5,2,0,440,38,2,2,6,0,0,60,2,75,'1 large'],
-  ['Tortilla, Corn 6" (2)',100,2,0,0,10,22,3,0,2,0,0,40,1,60,'2 small'],
-  // Fruits
+  ['Mashed Potatoes (1 cup)',230,9,5,30,620,35,3,3,4,13,0,50,1,620,'1 cup'],
+  ['French Fries (medium)',365,17,3,0,260,48,5,0,4,10,0,15,1,800,'medium portion'],
+  ['Sweet Potato Fries (medium)',300,14,2,0,170,42,4,10,3,10,0,40,1,500,'medium portion'],
+  ['Quinoa, Cooked (1 cup)',222,4,0.5,0,13,39,5,2,8,0,0,31,3,318,'1 cup'],
+  ['Couscous, Cooked (1 cup)',175,0,0,0,8,36,2,0,6,0,0,13,1,91,'1 cup'],
+  ['Farro, Cooked (1 cup)',220,2,0,0,0,46,5,1,8,0,0,30,2,200,'1 cup'],
+  ['Lentils, Cooked (1/2 cup)',115,0,0,0,2,20,8,2,9,1,0,19,3,365,'1/2 cup'],
+  ['Black Beans, Cooked (1/2 cup)',115,0,0,0,1,20,7,0,8,0,0,23,2,305,'1/2 cup'],
+  ['Chickpeas, Cooked (1/2 cup)',135,2,0,0,6,22,6,4,7,1,0,40,2,239,'1/2 cup'],
+  ['Kidney Beans, Cooked (1/2 cup)',110,0,0,0,0,20,6,0,8,1,0,30,2,360,'1/2 cup'],
+  ['Pinto Beans (1/2 cup)',120,0.5,0,0,200,22,7,0,7,1,0,45,2,370,'1/2 cup'],
+  ['Edamame (1/2 cup)',95,4,0.5,0,5,8,4,2,9,9,0,49,2,485,'1/2 cup'],
+  ['Corn, Cooked (1 cup)',130,2,0,0,0,29,4,5,5,7,0,3,1,325,'1 cup'],
+  ['Corn on the Cob (1 ear)',100,1.5,0.5,0,15,22,3,5,4,9,0,3,1,260,'1 ear'],
+
+  // ── FRUITS ──────────────────────────────────────────────────────────────
   ['Apple (1 medium)',95,0,0,0,2,25,4,19,0,8,0,11,0,195,'1 medium'],
+  ['Apple, Sliced (1 cup)',65,0,0,0,1,17,3,13,0,6,0,7,0,135,'1 cup'],
   ['Banana (1 medium)',105,0,0,0,1,27,3,14,1,10,0,6,0,422,'1 medium'],
+  ['Banana, Small (1)',90,0,0,0,1,23,3,12,1,9,0,5,0,362,'1 small'],
   ['Orange (1 medium)',65,0,0,0,0,16,3,13,1,70,0,52,0,237,'1 medium'],
+  ['Grapefruit (1/2)',50,0,0,0,0,13,2,8,1,44,0,25,0,166,'1/2 medium'],
   ['Strawberries (1 cup)',50,0,0,0,1,12,3,7,1,89,0,23,1,233,'1 cup'],
   ['Blueberries (1 cup)',85,0,0,0,1,21,4,15,1,14,0,9,0,114,'1 cup'],
-  ['Grapes (1 cup)',100,0,0,0,2,27,1,23,1,16,0,15,1,288,'1 cup'],
-  ['Watermelon (2 cups)',80,0,0,0,2,20,1,17,2,25,0,20,1,320,'2 cups'],
-  ['Mango (1 cup)',100,0,0,0,1,25,3,23,1,60,0,18,0,277,'1 cup'],
+  ['Raspberries (1 cup)',65,1,0,0,1,15,8,5,1,32,0,31,1,186,'1 cup'],
+  ['Blackberries (1 cup)',62,1,0,0,1,14,8,7,2,30,0,42,1,233,'1 cup'],
+  ['Grapes, Red/Green (1 cup)',100,0,0,0,2,27,1,23,1,16,0,15,1,288,'1 cup'],
+  ['Watermelon (2 cups diced)',80,0,0,0,2,20,1,17,2,25,0,20,1,320,'2 cups'],
+  ['Cantaloupe (1 cup diced)',55,0,0,0,25,13,1,13,1,57,0,14,0,430,'1 cup'],
+  ['Honeydew (1 cup diced)',61,0,0,0,30,15,1,14,1,32,0,10,0,388,'1 cup'],
   ['Pineapple (1 cup)',80,0,0,0,1,22,2,16,1,79,0,21,0,180,'1 cup'],
-  ['Avocado (1/2)',120,11,1.5,0,5,6,5,0,1,10,0,12,0,487,'1/2 medium'],
-  // Vegetables
+  ['Mango (1 cup diced)',100,0,0,0,1,25,3,23,1,60,0,18,0,277,'1 cup'],
+  ['Papaya (1 cup)',55,0,0,0,8,14,3,8,1,87,0,29,0,264,'1 cup'],
+  ['Kiwi (1 medium)',42,0,0,0,2,10,2,6,1,64,0,26,0,215,'1 medium'],
+  ['Peach (1 medium)',58,0,0,0,0,14,2,13,1,10,0,9,0,285,'1 medium'],
+  ['Pear (1 medium)',100,0,0,0,1,27,5,17,1,8,0,15,0,206,'1 medium'],
+  ['Plum (1 medium)',30,0,0,0,0,8,1,7,0,6,0,4,0,104,'1 medium'],
+  ['Cherries (1 cup)',87,0,0,0,0,22,3,18,1,10,0,21,1,342,'1 cup'],
+  ['Pomegranate Seeds (1/2 cup)',72,1,0,0,2,16,4,12,1,9,0,9,0,205,'1/2 cup'],
+  ['Avocado (1/2 medium)',120,11,1.5,0,5,6,5,0,1,10,0,12,0,487,'1/2 medium'],
+  ['Avocado, Whole (1 medium)',240,22,3,0,10,12,10,1,3,21,0,24,1,975,'1 medium'],
+  ['Dried Dates (3)',75,0,0,0,1,20,2,17,1,0,0,14,0,167,'3 dates'],
+  ['Raisins (1/4 cup)',130,0,0,0,5,34,2,25,1,1,0,20,1,330,'1/4 cup'],
+  ['Mixed Fruit Cup (1/2 cup)',60,0,0,0,10,16,0,14,0,3,0,8,0,120,'1/2 cup'],
+
+  // ── VEGETABLES ──────────────────────────────────────────────────────────
   ['Broccoli (1 cup)',55,0,0,0,55,11,5,3,4,81,0,43,1,288,'1 cup'],
-  ['Spinach (2 cups raw)',15,0,0,0,50,2,1,0,2,28,0,60,2,335,'2 cups'],
+  ['Broccoli, Roasted (1 cup)',65,3,0.5,0,80,7,3,2,5,81,0,43,1,288,'1 cup'],
+  ['Spinach, Raw (2 cups)',15,0,0,0,50,2,1,0,2,28,0,60,2,335,'2 cups'],
+  ['Spinach, Cooked (1/2 cup)',21,0,0,0,63,3,2,0,3,9,0,122,3,420,'1/2 cup'],
   ['Mixed Salad Greens (2 cups)',15,0,0,0,30,3,1,1,1,15,0,40,1,150,'2 cups'],
+  ['Romaine Lettuce (2 cups)',20,0,0,0,10,4,2,2,1,23,0,32,1,232,'2 cups'],
+  ['Kale (1 cup raw)',33,0.5,0,0,25,6,2,1,2,80,0,100,1,299,'1 cup raw'],
+  ['Kale, Cooked (1/2 cup)',21,0,0,0,15,4,1,0,1,27,0,50,1,150,'1/2 cup'],
   ['Carrot (1 medium)',25,0,0,0,45,6,2,3,1,3,0,20,0,195,'1 medium'],
-  ['Bell Pepper, Red (1 medium)',30,0,0,0,3,7,2,4,1,190,0,7,0,251,'1 medium'],
-  ['Tomato (1 medium)',20,0,0,0,5,5,1,3,1,17,0,10,0,292,'1 medium'],
+  ['Carrots, Baby (10)',35,0,0,0,75,8,2,5,1,5,0,25,0,230,'10 baby'],
+  ['Celery (2 stalks)',12,0,0,0,65,2,1,1,0,3,0,30,0,162,'2 stalks'],
   ['Cucumber (1 cup sliced)',15,0,0,0,2,3,0,2,1,3,0,15,0,150,'1 cup'],
-  ['Corn (1 cup)',130,2,0,0,0,29,4,5,5,7,0,3,1,325,'1 cup'],
-  ['Green Beans (1 cup)',35,0,0,0,0,8,4,4,2,12,0,40,1,211,'1 cup'],
+  ['Bell Pepper, Red (1 medium)',30,0,0,0,3,7,2,4,1,190,0,7,0,251,'1 medium'],
+  ['Bell Pepper, Green (1 medium)',24,0,0,0,4,6,2,3,1,80,0,9,0,208,'1 medium'],
+  ['Bell Pepper, Yellow (1 medium)',50,0,0,0,4,12,2,8,2,341,0,11,0,394,'1 medium'],
+  ['Tomato (1 medium)',22,0,0,0,6,5,1,3,1,17,0,10,0,292,'1 medium'],
+  ['Cherry Tomatoes (1 cup)',27,0,0,0,7,6,2,4,1,21,0,14,0,353,'1 cup'],
+  ['Onion (1/2 medium)',22,0,0,0,2,5,1,3,1,5,0,12,0,100,'1/2 medium'],
+  ['Red Onion (1/2 cup chopped)',32,0,0,0,3,7,1,3,1,6,0,17,0,117,'1/2 cup'],
+  ['Garlic (3 cloves)',13,0,0,0,2,3,0,0,1,3,0,16,0,36,'3 cloves'],
+  ['Mushrooms (1 cup)',15,0,0,0,5,2,0,1,2,2,0,3,0,223,'1 cup sliced'],
   ['Asparagus (1 cup)',40,0,0,0,5,8,4,4,4,14,0,32,3,271,'1 cup'],
-  // Dairy & Fats
+  ['Green Beans (1 cup)',35,0,0,0,0,8,4,4,2,12,0,40,1,211,'1 cup'],
+  ['Peas, Green (1/2 cup)',62,0,0,0,70,11,4,4,4,11,0,20,1,180,'1/2 cup'],
+  ['Corn, Frozen Kernels (1/2 cup)',80,1,0,0,0,19,2,3,3,4,0,2,0,200,'1/2 cup'],
+  ['Zucchini (1 cup sliced)',20,0,0,0,10,4,1,2,2,22,0,17,0,295,'1 cup'],
+  ['Yellow Squash (1 cup)',18,0,0,0,2,4,1,2,1,19,0,26,0,260,'1 cup'],
+  ['Eggplant (1 cup)',20,0,0,0,2,5,3,3,1,1,0,6,0,188,'1 cup'],
+  ['Cauliflower (1 cup)',27,0,0,0,30,5,3,2,2,46,0,22,0,300,'1 cup'],
+  ['Brussels Sprouts (1 cup)',56,0,0,0,28,11,4,3,4,75,0,37,2,342,'1 cup'],
+  ['Cabbage (1 cup raw)',22,0,0,0,16,5,2,3,1,33,0,36,0,151,'1 cup'],
+  ['Beets (1 cup cooked)',75,0,0,0,130,17,4,13,3,6,0,27,1,442,'1 cup'],
+  ['Artichoke Heart (1/2 cup)',45,0,0,0,240,9,4,1,2,4,0,18,1,220,'1/2 cup'],
+  ['Edamame in Shell (1 cup)',190,8,1,0,15,16,8,3,17,10,0,98,4,676,'1 cup in shell'],
+
+  // ── DAIRY & CHEESE ──────────────────────────────────────────────────────
   ['Cheddar Cheese (1 oz)',115,9,6,30,180,0,0,0,7,0,0,200,0,20,'1 oz'],
-  ['Mozzarella (1 oz)',85,6,4,22,140,1,0,0,6,0,0,180,0,20,'1 oz'],
-  ['Butter (1 tbsp)',100,11,7,30,90,0,0,0,0,0,0,3,0,3,'1 tbsp'],
-  ['Olive Oil (1 tbsp)',120,14,2,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
-  ['Coconut Oil (1 tbsp)',120,14,12,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
+  ['Mozzarella, Part-Skim (1 oz)',72,4.5,3,18,175,1,0,0,7,0,0,200,0,20,'1 oz'],
+  ['Mozzarella, Fresh (1 oz)',85,6,4,22,140,1,0,0,6,0,0,180,0,20,'1 oz'],
+  ['Swiss Cheese (1 oz)',106,8,5,26,54,2,0,0,8,0,0,220,0,22,'1 oz'],
+  ['Parmesan (2 tbsp grated)',40,2.5,1.5,8,180,0,0,0,4,0,0,100,0,20,'2 tbsp'],
+  ['American Cheese (1 slice)',65,5,3,15,220,1,0,1,4,0,0,130,0,20,'1 slice'],
   ['Cream Cheese (2 tbsp)',100,10,6,30,90,1,0,0,2,0,0,25,0,35,'2 tbsp'],
-  // Nuts & Seeds
+  ['Cream Cheese, Light (2 tbsp)',70,5,3,20,125,2,0,1,3,0,0,40,0,50,'2 tbsp'],
+  ['Brie (1 oz)',95,8,5,28,180,0,0,0,6,0,0,52,0,43,'1 oz'],
+  ['Feta (1 oz)',75,6,4,25,316,1,0,0,4,0,0,140,0,18,'1 oz'],
+  ['Cottage Cheese, 2% (1/2 cup)',90,2.5,1.5,12,380,4,0,3,12,0,0,125,0,100,'1/2 cup'],
+  ['String Cheese (1 stick)',80,6,3.5,20,200,0,0,0,7,0,0,200,0,30,'1 stick'],
+  ['Butter (1 tbsp)',100,11,7,30,90,0,0,0,0,0,0,3,0,3,'1 tbsp'],
+  ['Butter (1 tsp)',35,4,2.5,10,30,0,0,0,0,0,0,1,0,1,'1 tsp'],
+  ['Margarine (1 tbsp)',100,11,2,0,130,0,0,0,0,0,0,0,0,5,'1 tbsp'],
+  ['Ghee (1 tbsp)',130,15,9,40,0,0,0,0,0,0,0,0,0,1,'1 tbsp'],
+  ['Sour Cream (2 tbsp)',60,6,3.5,20,15,1,0,1,1,0,0,30,0,25,'2 tbsp'],
+  ['Sour Cream, Light (2 tbsp)',35,2.5,1.5,10,30,2,0,1,1,0,0,30,0,40,'2 tbsp'],
+  ['Half and Half (2 tbsp)',40,3.5,2,10,15,1,0,1,1,0,0,30,0,35,'2 tbsp'],
+  ['Heavy Cream (1 tbsp)',50,5,3.5,20,5,0,0,0,0,0,0,10,0,15,'1 tbsp'],
+  ['Whipped Cream (2 tbsp)',15,1,1,5,5,1,0,1,0,0,0,10,0,10,'2 tbsp'],
+  ['Ice Cream, Vanilla (1/2 cup)',140,7,4,30,55,17,0,14,2,0,0,130,0,130,'1/2 cup'],
+  ['Ice Cream, Chocolate (1/2 cup)',150,8,5,25,65,19,1,16,2,0,0,80,1,160,'1/2 cup'],
+  ['Frozen Yogurt, Vanilla (1/2 cup)',100,0,0,5,65,22,0,20,3,0,0,100,0,160,'1/2 cup'],
+
+  // ── NUTS, SEEDS & OILS ──────────────────────────────────────────────────
   ['Almonds (1 oz / ~23)',165,14,1,0,0,6,4,1,6,0,0,75,1,200,'1 oz'],
+  ['Almonds (1/4 cup)',210,18,1.5,0,0,7,4,2,8,0,0,95,1,260,'1/4 cup'],
   ['Walnuts (1 oz)',185,18,2,0,0,4,2,1,4,0,0,28,1,125,'1 oz'],
+  ['Cashews (1 oz / ~18)',157,12,2,0,3,9,1,2,5,0,0,10,2,187,'1 oz'],
+  ['Pistachios (1 oz / ~49)',160,13,1.5,0,0,8,3,2,6,1,0,30,1,290,'1 oz (~49)'],
+  ['Pecans (1 oz)',196,20,2,0,0,4,3,1,3,0,0,20,1,116,'1 oz'],
+  ['Macadamia Nuts (1 oz)',204,21,3.5,0,1,4,2,1,2,0,0,24,1,104,'1 oz'],
+  ['Mixed Nuts (1 oz)',170,15,2,0,95,7,2,1,5,0,0,20,1,160,'1 oz'],
+  ['Peanuts (1 oz)',160,14,2,0,115,6,2,1,7,0,0,15,1,200,'1 oz'],
   ['Peanut Butter (2 tbsp)',190,16,3,0,140,7,2,3,8,0,0,17,1,200,'2 tbsp'],
+  ['Peanut Butter, Crunchy (2 tbsp)',190,16,3,0,140,7,2,3,8,0,0,17,1,200,'2 tbsp'],
   ['Almond Butter (2 tbsp)',200,18,2,0,70,6,3,1,7,0,0,111,1,240,'2 tbsp'],
+  ['Sunflower Butter (2 tbsp)',200,17,2,0,125,7,2,3,7,0,0,20,1,190,'2 tbsp'],
+  ['Tahini (2 tbsp)',178,16,2,0,35,6,1,0,5,0,0,130,3,95,'2 tbsp'],
   ['Chia Seeds (2 tbsp)',80,5,0.5,0,5,8,6,0,4,0,0,150,2,80,'2 tbsp'],
+  ['Flax Seeds (2 tbsp)',80,6,0.5,0,6,4,4,0,3,0,0,52,1,115,'2 tbsp'],
+  ['Hemp Seeds (3 tbsp)',170,14,1.5,0,0,2,1,0,10,0,0,20,3,360,'3 tbsp'],
   ['Sunflower Seeds (1 oz)',165,14,1.5,0,0,7,3,1,5,0,0,20,1,241,'1 oz'],
-  // Beans & Legumes
-  ['Black Beans (1/2 cup)',115,0,0,0,0,20,8,0,8,0,0,23,2,305,'1/2 cup'],
-  ['Chickpeas (1/2 cup)',135,2,0,0,200,22,6,4,7,1,0,40,2,239,'1/2 cup'],
-  ['Lentils (1/2 cup)',115,0,0,0,0,20,8,1,9,1,0,19,3,365,'1/2 cup'],
-  ['Edamame (1/2 cup)',95,4,0.5,0,5,8,4,2,9,9,0,49,2,485,'1/2 cup'],
-  // Fast Food
-  ['McDonald\'s Big Mac',550,30,10,80,1010,45,3,9,25,3,0,100,4,440,'1 burger'],
-  ['McDonald\'s Fries, Medium',320,15,2.5,0,400,44,4,0,4,6,0,15,1,620,'medium'],
-  ['McDonald\'s McChicken',400,21,4,40,840,41,2,5,14,4,0,100,2,280,'1 sandwich'],
-  ['Chick-fil-A Sandwich',470,19,4,75,1370,41,2,8,28,1,0,150,2,390,'1 sandwich'],
-  ['Chick-fil-A Nuggets 8pc',260,12,2.5,65,1010,12,1,1,28,1,0,20,1,360,'8 pieces'],
-  ['Subway 6" Turkey',280,4.5,1,20,780,46,5,7,20,1,0,60,3,350,'6 inch'],
-  ['Subway 6" Meatball',460,18,8,50,1000,49,5,12,23,4,0,150,3,460,'6 inch'],
-  ['Chipotle Burrito Bowl (chicken)',650,20,7,100,1700,70,15,4,40,10,0,120,5,850,'1 bowl'],
-  ['Chipotle Burrito (chicken)',970,30,9,100,2120,115,17,6,50,15,0,160,6,900,'1 burrito'],
+  ['Pumpkin Seeds (1 oz)',158,14,2.5,0,5,3,2,0,9,0,0,12,4,226,'1 oz'],
+  ['Sesame Seeds (1 tbsp)',52,4.5,0.6,0,1,2,1,0,2,0,0,88,1,42,'1 tbsp'],
+  ['Olive Oil (1 tbsp)',120,14,2,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
+  ['Olive Oil (1 tsp)',40,4.5,0.5,0,0,0,0,0,0,0,0,0,0,0,'1 tsp'],
+  ['Coconut Oil (1 tbsp)',120,14,12,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
+  ['Vegetable Oil (1 tbsp)',120,14,2,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
+  ['Avocado Oil (1 tbsp)',120,14,1.5,0,0,0,0,0,0,0,0,0,0,0,'1 tbsp'],
+
+  // ── FAST FOOD ───────────────────────────────────────────────────────────
+  ["McDonald's Big Mac",550,30,10,80,1010,45,3,9,25,3,0,100,4,440,'1 burger'],
+  ["McDonald's Quarter Pounder w/ Cheese",520,26,12,95,1110,42,2,10,30,3,0,250,4,430,'1 burger'],
+  ["McDonald's McDouble",400,20,8,65,840,34,2,7,22,2,0,200,3,310,'1 burger'],
+  ["McDonald's McChicken",400,21,4,40,840,41,2,5,14,4,0,100,2,280,'1 sandwich'],
+  ["McDonald's Chicken McNuggets 10pc",430,27,4.5,65,830,27,1,0,24,0,0,15,1,370,'10 pieces'],
+  ["McDonald's Fries, Small",230,11,1.5,0,290,30,3,0,3,5,0,10,1,470,'small'],
+  ["McDonald's Fries, Medium",320,15,2.5,0,400,44,4,0,4,6,0,15,1,620,'medium'],
+  ["McDonald's Fries, Large",490,23,3,0,620,66,6,0,7,9,0,25,2,940,'large'],
+  ["McDonald's Egg McMuffin",310,13,5,260,750,30,2,3,17,1,0,250,3,210,'1 sandwich'],
+  ["McDonald's Sausage McMuffin w/ Egg",480,29,10,275,860,30,2,3,21,1,0,250,3,260,'1 sandwich'],
+  ["McDonald's Hotcakes (3)",590,15,5,45,820,102,4,28,10,0,0,200,5,270,'3 hotcakes'],
+  ["McDonald's McFlurry, Oreo (regular)",510,17,10,55,290,79,1,61,12,0,0,380,1,600,'regular'],
+  ["McDonald's Vanilla Soft Serve Cone",200,5,3.5,20,115,30,0,25,5,0,0,130,0,230,'small cone'],
+  ["Chick-fil-A Original Sandwich",470,19,4,75,1370,41,2,8,28,1,0,150,2,390,'1 sandwich'],
+  ["Chick-fil-A Spicy Sandwich",450,18,4,70,1480,44,2,9,27,1,0,150,2,390,'1 sandwich'],
+  ["Chick-fil-A Nuggets 8pc",260,12,2.5,65,1010,12,1,1,28,1,0,20,1,360,'8 pieces'],
+  ["Chick-fil-A Waffle Fries, Medium",360,18,4,0,290,46,5,1,4,5,0,15,1,560,'medium'],
+  ["Chick-fil-A Mac & Cheese, Medium",450,27,10,55,970,38,2,9,15,0,0,250,1,180,'medium'],
+  ["Chick-fil-A Grilled Chicken Sandwich",390,11,3,80,1010,40,3,9,38,1,0,150,2,580,'1 sandwich'],
+  ["Chick-fil-A Grilled Nuggets 8pc",130,3.5,1,75,440,2,0,1,25,0,0,20,1,460,'8 pieces'],
+  ['Subway 6in Italian BMT',480,21,7,55,1630,47,4,8,26,6,0,130,3,340,'6 inch'],
+  ['Subway 6in Turkey Breast',280,4.5,1,20,780,46,5,7,20,1,0,60,3,350,'6 inch'],
+  ['Subway 6in Veggie Delite',230,2.5,0,0,510,44,5,7,9,9,0,80,3,310,'6 inch'],
+  ['Subway 6in Meatball Marinara',460,18,8,50,1000,49,5,12,23,4,0,150,3,460,'6 inch'],
+  ['Subway 12in Turkey Breast',560,9,2,40,1560,92,10,14,40,2,0,120,6,700,'12 inch'],
+  ['Chipotle Burrito Bowl, Chicken',650,20,7,100,1700,70,15,4,40,10,0,120,5,850,'1 bowl'],
+  ['Chipotle Burrito, Chicken',970,30,9,100,2120,115,17,6,50,15,0,160,6,900,'1 burrito'],
+  ['Chipotle Tacos, Chicken (3)',430,15,5,75,1200,50,8,4,30,8,0,90,4,620,'3 tacos'],
+  ['Chipotle Bowl, Steak',575,17,5,80,1540,65,13,4,38,8,0,90,4,800,'1 bowl'],
+  ['Chipotle Guacamole Side',230,22,3,0,310,11,9,1,2,8,0,15,0,540,'1 side'],
+  ['Chipotle Chips & Guac',770,42,6,0,880,87,10,1,10,8,0,30,3,570,'chips + guac'],
+  ['Pizza Hut, Pepperoni (2 slices, medium)',520,22,8,50,1220,58,3,8,22,4,0,250,4,310,'2 slices'],
+  ['Pizza Hut, Cheese (2 slices, medium)',460,16,7,40,960,60,3,8,20,4,0,280,4,260,'2 slices'],
+  ['Dominos, Pepperoni (2 slices, large)',540,22,9,50,1140,62,3,8,24,2,0,200,4,290,'2 slices'],
   ['Pizza, Pepperoni (2 slices)',520,20,8,50,1180,64,3,8,24,2,0,200,4,340,'2 slices'],
   ['Pizza, Cheese (2 slices)',460,16,7,40,920,64,3,8,22,2,0,300,4,250,'2 slices'],
-  // Snacks
+  ['Taco Bell Crunchy Taco',170,9,3.5,25,310,13,3,1,8,1,0,60,1,170,'1 taco'],
+  ['Taco Bell Soft Taco',180,8,3.5,25,500,17,2,2,9,1,0,70,1,180,'1 taco'],
+  ['Taco Bell Chalupa Supreme, Beef',370,19,6,35,640,38,4,5,14,2,0,130,2,270,'1 chalupa'],
+  ['Taco Bell Bean Burrito',350,9,3,10,1040,55,9,4,12,2,0,130,3,380,'1 burrito'],
+  ['Taco Bell Quesadilla, Chicken',500,27,9,70,1150,39,3,4,26,1,0,350,2,280,'1 quesadilla'],
+  ['KFC Original Chicken Breast',390,21,4.5,145,1010,11,0,0,40,0,0,20,2,380,'1 piece'],
+  ['KFC Original Chicken Thigh',280,19,5,105,640,8,0,0,22,0,0,20,2,310,'1 piece'],
+  ['KFC Mashed Potatoes & Gravy',160,7,1,0,530,22,1,1,2,5,0,20,0,250,'1 side'],
+  ['KFC Cole Slaw',150,9,1.5,10,220,17,2,14,1,10,0,40,0,150,'1 side'],
+  ['Burger King Whopper',660,40,12,90,980,49,2,11,28,7,0,80,5,570,'1 burger'],
+  ['Burger King Double Whopper',900,58,19,175,1000,49,2,11,47,7,0,80,6,720,'1 burger'],
+  ['Burger King Chicken Sandwich',670,38,8,80,1440,52,2,8,28,5,0,100,4,430,'1 sandwich'],
+  ['Burger King Fries, Medium',380,17,4,0,480,52,3,0,4,7,0,10,1,590,'medium'],
+  ['Wendys Daves Single',570,30,11,90,1110,40,2,9,30,3,0,100,4,430,'1 burger'],
+  ['Wendys Baconator',950,62,23,185,1650,41,1,9,57,5,0,100,5,730,'1 burger'],
+  ['Wendys Frosty Small',340,9,6,35,160,57,0,47,9,2,0,300,0,430,'small'],
+  ['Wendys 4pc Nuggets',180,11,2.5,30,440,11,0,0,9,0,0,0,0,150,'4 pieces'],
+  ["Panda Express Orange Chicken (1 serving)",490,23,5,65,820,51,1,26,25,4,0,20,2,290,'1 serving'],
+  ["Panda Express Fried Rice (1 serving)",620,21,4,165,1090,85,4,4,16,6,0,60,3,260,'1 serving'],
+  ["Panda Express Chow Mein (1 serving)",510,22,5,0,980,67,7,9,13,3,0,40,3,230,'1 serving'],
+  ["Panda Express Broccoli Beef (1 serving)",150,7,1.5,25,710,13,2,5,9,35,0,40,1,350,'1 serving'],
+  ['Five Guys Hamburger',700,43,20,165,430,40,2,11,40,5,0,200,4,570,'1 burger'],
+  ['Five Guys Fries, Regular',953,41,7,0,962,131,10,1,13,19,0,20,4,2380,'regular'],
+
+  // ── BREAKFAST FOODS ─────────────────────────────────────────────────────
+  ['Pancakes, Plain (3 medium)',250,8,2,45,580,38,1,8,6,0,0,100,2,130,'3 medium'],
+  ['Pancakes w/ Syrup (3 medium)',420,9,2,45,590,78,1,43,7,0,0,100,2,135,'3 with syrup'],
+  ['Waffles, Homestyle (2 frozen)',190,6,2,30,430,30,1,5,4,0,0,150,2,80,'2 waffles'],
+  ['Belgian Waffle (1 large)',400,15,4,90,680,56,2,12,10,0,0,150,3,120,'1 large'],
+  ['French Toast (2 slices)',280,13,4,190,390,32,1,9,10,1,0,130,2,170,'2 slices'],
+  ['Eggs Benedict (1)',360,24,8,490,900,15,0,2,20,1,0,130,3,240,'1 serving'],
+  ['Breakfast Burrito (egg, cheese, sausage)',450,26,9,280,880,34,2,2,20,2,0,200,3,300,'1 burrito'],
+  ['Cereal, Cheerios (1 cup)',100,2,0,0,170,20,3,1,3,0,0,130,8,190,'1 cup'],
+  ['Cereal, Honey Nut Cheerios (1 cup)',110,2,0,0,220,22,2,9,3,0,0,110,5,180,'1 cup'],
+  ['Cereal, Frosted Flakes (3/4 cup)',130,0,0,0,130,31,1,12,2,0,0,0,5,30,'3/4 cup'],
+  ['Cereal, Raisin Bran (1 cup)',190,1,0,0,220,46,7,18,5,0,0,20,9,340,'1 cup'],
+  ['Cereal, Special K (1 cup)',120,0.5,0,0,220,23,1,4,6,0,0,0,8,45,'1 cup'],
+  ['Cereal, Granola (1/2 cup)',230,9,1,0,80,34,3,12,6,0,0,30,2,210,'1/2 cup'],
+  ['Oatmeal, Instant Packet',130,2.5,0.5,0,100,27,3,11,4,0,0,100,10,115,'1 packet'],
+  ['Bagel with Cream Cheese',370,11,6,30,530,56,2,6,13,0,0,80,3,140,'1 bagel + 2tbsp'],
+  ['Toast with Butter (2 slices)',210,9,5,20,340,28,2,3,4,0,0,50,1,75,'2 slices'],
+  ['Toast with Peanut Butter (2 slices)',350,18,3,0,470,36,3,7,12,0,0,55,2,250,'2 slices'],
+  ['Avocado Toast (1 slice)',200,12,2,0,250,20,5,1,4,10,0,20,1,410,'1 slice'],
+  ['Muffin, Blueberry (1 large)',430,17,3,55,370,65,1,38,7,3,0,150,2,90,'1 large'],
+  ['Muffin, Bran (1 medium)',350,14,2,50,420,55,5,22,6,0,0,80,3,310,'1 medium'],
+  ['Scone, Plain (1)',390,19,12,50,340,48,1,14,6,0,0,40,2,120,'1 scone'],
+  ['Donut, Glazed (1)',260,12,3,0,260,34,1,14,4,0,0,10,1,65,'1 donut'],
+  ['Donut, Chocolate Frosted (1)',280,14,4,5,270,37,1,18,3,0,0,10,1,60,'1 donut'],
+  ['Cinnamon Roll (1)',450,16,5,45,380,72,2,37,7,0,0,80,2,130,'1 roll'],
+  ['Hash Browns (1 cup)',290,19,3,0,540,28,3,1,3,13,0,15,1,490,'1 cup'],
+  ['Breakfast Sausage Patty (2)',280,24,9,60,680,0,0,0,14,0,0,30,1,270,'2 patties'],
+
+  // ── SANDWICHES, WRAPS & MEALS ────────────────────────────────────────────
+  ['Ham & Cheese Sandwich',380,14,6,50,1100,43,2,5,22,0,0,200,2,290,'1 sandwich'],
+  ['Turkey Club Sandwich',450,18,5,55,1200,44,3,6,28,2,0,150,2,380,'1 sandwich'],
+  ['BLT Sandwich',360,16,5,30,830,38,2,5,14,6,0,80,2,330,'1 sandwich'],
+  ['Grilled Cheese Sandwich',390,21,12,50,760,38,2,5,16,0,0,300,2,150,'1 sandwich'],
+  ['PB&J Sandwich',390,17,3,0,390,50,3,24,13,0,0,55,2,330,'1 sandwich'],
+  ['Chicken Caesar Wrap',540,28,6,80,1200,42,3,4,30,5,0,150,3,400,'1 wrap'],
+  ['Chicken Quesadilla',540,28,10,85,1150,42,3,4,28,2,0,380,2,320,'1 large'],
+  ['Fish Tacos (2)',380,16,3,50,700,42,3,5,18,8,0,100,2,350,'2 tacos'],
+  ['Burrito, Bean & Cheese',490,15,7,30,1150,70,11,4,19,4,0,350,4,620,'1 burrito'],
+  ['Hot Dog (1)',290,18,7,35,770,23,1,5,11,0,0,60,2,200,'1 with bun'],
+  ['Corn Dog (1)',280,15,5,25,510,27,1,6,7,0,0,60,2,180,'1 corn dog'],
+  ['Veggie Burger (1)',330,12,1.5,0,650,42,7,8,15,8,0,80,4,450,'1 patty + bun'],
+
+  // ── SOUPS & SALADS ───────────────────────────────────────────────────────
+  ['Chicken Noodle Soup (1 cup)',60,2,0.5,20,840,8,1,1,3,1,0,17,1,108,'1 cup'],
+  ['Tomato Soup (1 cup)',90,3,1,5,890,15,2,9,2,10,0,20,2,450,'1 cup'],
+  ['Minestrone Soup (1 cup)',80,2,0.5,0,780,13,3,4,3,6,0,40,1,390,'1 cup'],
+  ['Broccoli Cheddar Soup (1 cup)',290,22,12,60,820,17,2,4,9,18,0,250,1,310,'1 cup'],
+  ['Clam Chowder (1 cup)',190,7,3,40,930,25,1,3,8,4,0,80,2,280,'1 cup'],
+  ['Lentil Soup (1 cup)',140,2,0,0,510,24,9,3,9,3,0,35,3,430,'1 cup'],
+  ['Caesar Salad (2 cups)',290,26,5,20,590,11,2,2,6,7,0,120,1,280,'2 cups with dressing'],
+  ['House Salad with Dressing (2 cups)',150,11,2,10,380,9,2,5,3,18,0,60,1,230,'2 cups'],
+  ['Greek Salad (2 cups)',220,18,5,15,660,10,3,5,5,15,0,120,1,310,'2 cups'],
+  ['Cobb Salad (2 cups)',410,32,9,185,910,8,3,4,26,9,0,130,2,480,'2 cups'],
+  ['Taco Salad (1 large)',790,45,12,65,1520,75,12,12,30,8,0,280,5,870,'1 large'],
+  ['Side Salad, Plain (1 cup)',20,0,0,0,25,4,1,2,1,15,0,30,0,150,'1 cup'],
+  ['Coleslaw (1/2 cup)',150,9,1,10,220,17,2,14,1,10,0,40,0,150,'1/2 cup'],
+  ['Pasta Salad (1 cup)',280,15,3,10,490,30,2,4,7,4,0,30,1,150,'1 cup'],
+  ['Potato Salad (1/2 cup)',180,10,2,85,360,20,1,3,2,8,0,20,1,290,'1/2 cup'],
+
+  // ── SNACKS ───────────────────────────────────────────────────────────────
   ['Doritos, Nacho (1 oz)',140,8,1,0,200,18,1,1,2,1,0,40,0,70,'1 oz (~12 chips)'],
-  ['Lay\'s Classic Chips (1 oz)',160,10,3,0,160,15,1,0,2,10,0,0,0,350,'1 oz'],
+  ["Lay's Classic Chips (1 oz)",160,10,3,0,160,15,1,0,2,10,0,0,0,350,'1 oz'],
+  ["Lay's Baked Chips (1 oz)",120,3,0.5,0,150,22,1,2,2,5,0,0,0,440,'1 oz'],
+  ['Pringles (14 chips)',140,9,2.5,0,170,15,1,1,1,2,0,0,0,120,'14 chips'],
+  ['Tortilla Chips (1 oz)',140,7,1,0,115,18,1,0,2,0,0,44,0,61,'1 oz (~14 chips)'],
   ['Pretzels (1 oz)',110,1,0,0,390,23,1,1,3,0,0,10,1,45,'1 oz'],
   ['Popcorn, Air-Popped (3 cups)',93,1,0,0,2,19,4,0,3,0,0,2,1,93,'3 cups'],
-  ['Granola Bar, Quaker (1 bar)',190,7,1,0,150,29,2,12,4,0,0,20,1,105,'1 bar'],
-  ['Kind Bar, Almond (1 bar)',200,15,1.5,0,30,17,3,5,6,0,0,40,1,200,'1 bar'],
-  ['Clif Bar (1 bar)',250,6,1,0,180,44,5,20,10,0,0,250,2,200,'1 bar'],
-  ['Rice Cakes (2 cakes)',70,0,0,0,50,15,0,0,1,0,0,0,0,30,'2 cakes'],
-  ['String Cheese (1 stick)',80,6,3.5,20,200,0,0,0,7,0,0,200,0,30,'1 stick'],
+  ['Popcorn, Butter (3 cups)',170,10,4,10,270,18,3,0,2,0,0,0,1,70,'3 cups'],
+  ['Cheez-Its (1 oz / 27)',150,8,2,0,230,17,0,0,3,0,0,90,1,35,'1 oz (27 crackers)'],
+  ['Goldfish Crackers (55 pieces)',140,5,1,0,230,20,1,0,3,0,0,30,1,50,'55 crackers'],
+  ['Crackers, Ritz (5)',80,4,1,0,115,10,0,1,1,0,0,0,0,20,'5 crackers'],
+  ['Crackers, Wheat Thins (16)',140,5,1,0,230,22,2,5,2,0,0,10,1,110,'16 crackers'],
+  ['Granola Bar, Quaker Chewy',190,7,1,0,150,29,2,12,4,0,0,20,1,105,'1 bar'],
+  ['Kind Bar, Almond',200,15,1.5,0,30,17,3,5,6,0,0,40,1,200,'1 bar'],
+  ['Clif Bar, Chocolate Chip',250,6,1,0,180,44,5,20,10,0,0,250,2,200,'1 bar'],
+  ['Rice Cakes (2)',70,0,0,0,50,15,0,0,1,0,0,0,0,30,'2 cakes'],
+  ['Rice Cakes, Flavored (1)',50,0.5,0,0,70,11,0,3,1,0,0,0,0,25,'1 cake'],
   ['Hummus (2 tbsp)',50,3,0,0,115,5,2,1,2,1,0,28,1,105,'2 tbsp'],
-  ['Pita Bread (1 small)',150,1,0,0,300,30,1,1,5,0,0,40,1,60,'1 small'],
-  // Breakfast
-  ['Pancakes, 3 medium',250,8,2,45,580,38,1,8,6,0,0,100,2,130,'3 medium'],
-  ['Waffles, 2 frozen',190,6,2,30,430,30,1,5,4,0,0,150,2,80,'2 waffles'],
-  ['Cereal, Cheerios (1 cup)',100,2,0,0,170,20,3,1,3,0,0,130,8,190,'1 cup'],
-  ['Cereal, Frosted Flakes (3/4 cup)',130,0,0,0,130,31,1,12,2,0,0,0,5,30,'3/4 cup'],
-  ['Bagel, Plain (1 medium)',270,1,0,0,440,55,2,6,11,0,0,60,3,105,'1 medium'],
-  ['Croissant (1 medium)',230,12,7,50,310,26,2,6,5,0,0,20,1,70,'1 medium'],
-  ['Muffin, Blueberry (1 large)',430,17,3,55,370,65,1,38,7,3,0,150,2,90,'1 large'],
-  // Condiments & Extras
-  ['Ketchup (1 tbsp)',20,0,0,0,160,5,0,4,0,2,0,0,0,55,'1 tbsp'],
-  ['Ranch Dressing (2 tbsp)',130,13,2,10,260,2,0,1,1,1,0,30,0,25,'2 tbsp'],
-  ['Mayonnaise (1 tbsp)',90,10,1.5,5,90,0,0,0,0,0,0,0,0,5,'1 tbsp'],
-  ['Soy Sauce (1 tbsp)',10,0,0,0,900,1,0,0,1,0,0,0,0,30,'1 tbsp'],
-  ['Hot Sauce (1 tsp)',0,0,0,0,200,0,0,0,0,0,0,0,0,0,'1 tsp'],
-  ['Salsa (2 tbsp)',10,0,0,0,180,2,0,1,0,4,0,10,0,95,'2 tbsp'],
   ['Guacamole (2 tbsp)',45,4,0.5,0,90,3,2,0,1,4,0,5,0,185,'2 tbsp'],
-  // Sweets
+  ['Salsa (2 tbsp)',10,0,0,0,180,2,0,1,0,4,0,10,0,95,'2 tbsp'],
+  ['String Cheese (1 stick)',80,6,3.5,20,200,0,0,0,7,0,0,200,0,30,'1 stick'],
+  ['Cheese Stick, Fried (1)',110,7,3,15,280,7,0,0,5,0,0,100,0,40,'1 stick'],
+  ['Celery with Peanut Butter',140,11,2,0,175,8,3,3,5,3,0,25,1,310,'2 stalks + 1 tbsp'],
+  ['Apple with Peanut Butter',270,16,2,0,145,32,6,22,8,8,0,28,1,595,'1 apple + 2 tbsp'],
+  ['Trail Mix, Mixed (1/4 cup)',175,12,2,0,50,16,2,10,5,0,0,30,1,230,'1/4 cup'],
+  ['Beef Jerky (1 oz)',116,7,3,15,505,4,0,3,9,0,0,4,1,170,'1 oz'],
+  ['Turkey Jerky (1 oz)',70,0.5,0,30,580,7,0,5,13,0,0,0,1,170,'1 oz'],
+  ['Edamame, Shelled (1/2 cup)',95,4,0.5,0,5,8,4,2,9,9,0,49,2,485,'1/2 cup'],
+  ['Fruit Snacks (1 pouch)',80,0,0,0,40,19,0,10,0,60,0,0,0,35,'1 pouch'],
+  ['Fruit Roll-Up (1)',50,0.5,0,0,45,12,0,7,0,0,0,0,0,10,'1 roll'],
+  ['Graham Crackers (2 full sheets)',120,3,0.5,0,170,22,1,8,2,0,0,10,1,60,'2 full sheets'],
+  ['Oreo Cookies (3)',160,7,2,0,135,25,1,14,2,0,0,0,2,75,'3 cookies'],
+  ['Chocolate Chip Cookies (2)',140,7,2.5,10,85,19,1,11,1,0,0,10,1,55,'2 medium'],
+  ['Chips Ahoy (3)',160,8,2.5,0,130,22,1,11,2,0,0,0,1,60,'3 cookies'],
+  ['Animal Crackers (16)',130,4,1,0,130,22,0,6,2,0,0,10,1,35,'16 crackers'],
+  ['Fig Newtons (2)',110,2,0,0,115,22,1,12,1,0,0,20,1,90,'2 cookies'],
+  ['Pop Tart (1)',200,5,1.5,0,190,36,1,17,2,0,0,0,2,50,'1 pastry'],
+
+  // ── CONDIMENTS, SAUCES & SPREADS ─────────────────────────────────────────
+  ['Ketchup (1 tbsp)',20,0,0,0,160,5,0,4,0,2,0,0,0,55,'1 tbsp'],
+  ['Ketchup (2 tbsp)',40,0,0,0,320,10,0,8,0,4,0,0,0,110,'2 tbsp'],
+  ['Mustard, Yellow (1 tsp)',3,0,0,0,55,0,0,0,0,0,0,4,0,8,'1 tsp'],
+  ['Ranch Dressing (2 tbsp)',130,13,2,10,260,2,0,1,1,1,0,30,0,25,'2 tbsp'],
+  ['Caesar Dressing (2 tbsp)',150,16,2.5,10,340,1,0,1,1,0,0,20,0,30,'2 tbsp'],
+  ['Italian Dressing (2 tbsp)',70,7,1,0,430,2,0,1,0,0,0,0,0,10,'2 tbsp'],
+  ['Balsamic Vinaigrette (2 tbsp)',60,5,0.5,0,260,4,0,3,0,0,0,10,0,30,'2 tbsp'],
+  ['Thousand Island Dressing (2 tbsp)',120,11,1.5,15,310,5,0,4,0,2,0,10,0,45,'2 tbsp'],
+  ['Blue Cheese Dressing (2 tbsp)',150,16,3,15,340,2,0,1,1,0,0,30,0,15,'2 tbsp'],
+  ['Honey Mustard (2 tbsp)',130,10,1.5,10,280,9,0,8,0,1,0,10,0,20,'2 tbsp'],
+  ['BBQ Sauce (2 tbsp)',70,0,0,0,330,16,0,12,0,1,0,10,0,100,'2 tbsp'],
+  ['Hot Sauce (1 tsp)',0,0,0,0,200,0,0,0,0,0,0,0,0,0,'1 tsp'],
+  ['Sriracha (1 tsp)',5,0,0,0,100,1,0,1,0,3,0,0,0,20,'1 tsp'],
+  ['Soy Sauce (1 tbsp)',10,0,0,0,900,1,0,0,1,0,0,0,0,30,'1 tbsp'],
+  ['Soy Sauce, Low Sodium (1 tbsp)',10,0,0,0,530,1,0,0,1,0,0,0,0,30,'1 tbsp'],
+  ['Teriyaki Sauce (1 tbsp)',15,0,0,0,610,3,0,2,1,0,0,5,0,40,'1 tbsp'],
+  ['Mayonnaise (1 tbsp)',90,10,1.5,5,90,0,0,0,0,0,0,0,0,5,'1 tbsp'],
+  ['Mayonnaise, Light (1 tbsp)',45,4.5,0.5,5,110,1,0,1,0,0,0,0,0,0,'1 tbsp'],
+  ['Salsa, Chunky (2 tbsp)',10,0,0,0,180,2,0,1,0,4,0,10,0,95,'2 tbsp'],
+  ['Tomato Sauce (1/2 cup)',40,0,0,0,400,9,2,6,2,15,0,30,1,450,'1/2 cup'],
+  ['Marinara Sauce (1/2 cup)',80,3,0.5,0,500,12,3,8,2,12,0,40,1,400,'1/2 cup'],
+  ['Alfredo Sauce (1/4 cup)',120,11,7,35,390,3,0,1,3,0,0,80,0,40,'1/4 cup'],
+  ['Pesto (2 tbsp)',160,15,3,5,290,3,1,1,3,3,0,50,1,80,'2 tbsp'],
+  ['Syrup, Maple (1 tbsp)',50,0,0,0,2,13,0,12,0,0,0,20,0,42,'1 tbsp'],
+  ['Honey (1 tbsp)',60,0,0,0,1,17,0,17,0,0,0,1,0,11,'1 tbsp'],
+  ['Jam / Jelly (1 tbsp)',50,0,0,0,5,13,0,9,0,2,0,4,0,15,'1 tbsp'],
+  ['Nutella (2 tbsp)',200,12,4,0,15,23,1,21,2,0,0,60,2,0,'2 tbsp'],
+  ['Hummus (1/4 cup)',100,6,1,0,230,10,3,2,3,2,0,55,2,210,'1/4 cup'],
+
+  // ── SWEETS & DESSERTS ────────────────────────────────────────────────────
   ['Chocolate, Dark 70% (1 oz)',170,12,7,0,5,13,3,7,2,0,0,20,3,200,'1 oz'],
   ['Chocolate, Milk (1 oz)',153,9,5,10,24,17,1,15,2,0,0,55,1,110,'1 oz'],
-  ['Ice Cream, Vanilla (1/2 cup)',140,7,4,30,55,17,0,14,2,0,0,130,0,130,'1/2 cup'],
-  ['Cookie, Chocolate Chip (2)',140,7,2.5,10,85,19,1,11,1,0,0,10,1,55,'2 medium'],
-  ['Donut, Glazed (1)',260,12,3,0,260,34,1,14,4,0,0,10,1,65,'1 donut'],
-  // Sauces & Prepared Foods  
-  ['Tomato Sauce (1/2 cup)',40,0,0,0,400,9,2,6,2,15,0,30,1,450,'1/2 cup'],
-  ['Chicken Noodle Soup (1 cup)',60,2,0.5,20,840,8,1,1,3,1,0,17,1,108,'1 cup'],
+  ['Chocolate Bar, Snickers (1)',250,12,4.5,5,120,33,1,28,4,0,0,40,0,170,'1 fun size'],
+  ['Chocolate Bar, Reeses (1 cup)',105,6,2,0,110,11,1,9,3,0,0,15,0,90,'1 cup'],
+  ['Chocolate Bar, Kit Kat (1 packet)',210,11,7,0,30,27,1,21,3,0,0,60,1,95,'2 bars'],
+  ['M&Ms (1 oz / small bag)',240,10,6,5,20,34,1,30,2,0,0,60,0,120,'1 oz'],
+  ['Skittles (1 oz)',113,1,0,0,10,26,0,22,0,16,0,0,0,10,'1 oz'],
+  ['Gummy Bears (17 pieces)',130,0,0,0,25,29,0,21,2,0,0,0,0,0,'17 pieces'],
+  ['Cookie, Oreo (3)',160,7,2,0,135,25,1,14,2,0,0,0,2,75,'3 cookies'],
+  ['Brownie (1 square)',230,10,3,25,190,36,1,24,3,0,0,20,1,95,'1 square'],
+  ['Cake, Chocolate Slice',350,15,5,45,420,55,2,35,5,0,0,60,2,180,'1 slice'],
+  ['Cake, Vanilla Slice',310,11,4,40,380,50,1,30,4,0,0,60,1,100,'1 slice'],
+  ['Cheesecake (1 slice)',400,28,15,110,360,32,0,24,7,0,0,80,1,160,'1 slice'],
+  ['Pie, Apple (1 slice)',270,13,4,0,250,37,2,15,2,3,0,8,1,100,'1 slice'],
+  ['Pie, Pumpkin (1 slice)',230,10,3.5,45,280,32,2,17,5,2,0,80,2,210,'1 slice'],
+  ['Jell-O (1/2 cup)',70,0,0,0,90,17,0,17,1,0,0,0,0,0,'1/2 cup'],
+  ['Pudding Cup, Chocolate',130,4,2,5,180,24,1,17,2,0,0,80,0,170,'1 cup (4 oz)'],
+  ['Fruit Popsicle (1)',45,0,0,0,5,11,0,9,0,4,0,0,0,20,'1 popsicle'],
+  ['Sorbet (1/2 cup)',120,0,0,0,10,30,1,26,1,4,0,5,0,80,'1/2 cup'],
+  ['Gelato (1/2 cup)',200,8,5,50,60,28,0,22,4,0,0,100,0,150,'1/2 cup'],
+
+  // ── PREPARED & PACKAGED MEALS ────────────────────────────────────────────
   ['Mac and Cheese, Boxed (1 cup)',350,10,3,20,740,53,2,7,10,0,0,150,2,130,'1 cup'],
+  ['Ramen Noodles, Chicken (1 package)',380,14,6,0,1820,54,2,3,9,0,0,30,4,120,'1 package'],
+  ['Ramen Noodles, Beef (1 package)',380,14,7,0,1750,55,2,3,9,0,0,20,4,130,'1 package'],
+  ['Microwave Popcorn, Butter (3 cups)',170,10,4,10,270,18,3,0,2,0,0,0,1,70,'3 cups popped'],
+  ['Frozen Pizza, Pepperoni (1/4)',320,14,6,25,720,38,2,5,14,2,0,120,2,200,'1/4 pizza'],
+  ['Frozen Lasagna (1 cup)',290,12,6,50,740,32,2,6,16,4,0,150,2,310,'1 cup'],
+  ['Frozen Chicken Nuggets (6)',270,17,3,30,520,15,1,0,15,0,0,10,1,230,'6 pieces'],
+  ['Frozen Fish Sticks (4)',180,8,2,25,380,20,0,0,10,0,0,20,0,180,'4 sticks'],
+  ['Soup, Progresso Chicken Noodle (1 cup)',100,2,0.5,25,720,14,1,2,7,1,0,10,1,190,'1 cup'],
+  ['Soup, Campbell Tomato (1 cup)',90,0,0,0,710,20,1,14,2,4,0,20,1,400,'1 cup'],
+  ['Canned Chili, Beef (1 cup)',250,8,3,40,780,26,8,3,18,2,0,60,4,480,'1 cup'],
+  ['Canned Tuna Salad Sandwich',380,15,3,45,870,38,2,5,22,2,0,60,2,250,'1 sandwich'],
+  ['Spam (2 oz)',180,16,6,50,770,1,0,0,7,0,0,0,1,0,'2 oz'],
+  ['Vienna Sausages (3)',130,11,4,45,450,1,0,0,5,0,0,10,1,65,'3 sausages'],
+
+  // ── INTERNATIONAL & ETHNIC FOODS ────────────────────────────────────────
+  ['Sushi Roll, California (8 pieces)',250,7,1,20,550,38,2,4,8,4,0,40,1,180,'8 pieces'],
+  ['Sushi Roll, Spicy Tuna (8 pieces)',290,11,2,30,680,34,1,4,14,5,0,30,1,250,'8 pieces'],
+  ['Sushi, Salmon Nigiri (2 pieces)',130,2,0.5,30,330,24,1,0,8,0,0,10,0,170,'2 pieces'],
+  ['Pad Thai, Chicken (1 cup)',340,14,3,80,860,42,2,6,16,8,0,40,2,300,'1 cup'],
+  ['Fried Rice, Chicken (1 cup)',350,10,2,115,730,50,2,2,14,4,0,30,2,260,'1 cup'],
+  ['General Tso Chicken (1 cup)',430,20,4,60,760,44,1,20,20,4,0,30,2,280,'1 cup'],
+  ['Beef with Broccoli (1 cup)',200,10,3,40,830,12,3,4,19,35,0,50,2,480,'1 cup'],
+  ['Lo Mein, Chicken (1 cup)',310,11,2,35,910,41,3,5,15,5,0,40,2,250,'1 cup'],
+  ['Egg Roll (1)',200,9,2,25,420,22,2,2,7,2,0,20,1,120,'1 roll'],
+  ['Spring Roll (2)',130,5,1,10,280,17,2,2,4,4,0,20,1,120,'2 rolls'],
+  ['Gyoza / Dumplings (5 pieces)',220,9,3,40,560,25,2,2,10,2,0,30,2,160,'5 pieces'],
+  ['Chicken Tikka Masala (1 cup)',320,18,6,90,770,16,2,8,28,5,0,60,2,530,'1 cup'],
+  ['Biryani, Chicken (1 cup)',350,12,3,70,680,46,2,3,18,4,0,40,2,350,'1 cup'],
+  ['Falafel (3 pieces)',200,9,1,0,400,26,5,3,7,4,0,50,3,270,'3 pieces'],
+  ['Shawarma, Chicken Wrap',520,22,5,75,1290,48,3,5,32,4,0,120,3,450,'1 wrap'],
+  ['Hummus Plate',290,15,2,0,640,32,8,4,9,4,0,100,4,420,'1 plate'],
+  ['Tacos Al Pastor (3)',480,22,6,80,880,50,5,6,22,10,0,100,3,480,'3 tacos'],
+  ['Carne Asada Tacos (3)',450,18,5,75,820,48,5,4,26,8,0,90,3,460,'3 tacos'],
+  ['Enchiladas, Chicken (2)',440,20,8,70,1240,44,4,6,24,4,0,220,3,420,'2 enchiladas'],
+
+  // ── ALCOHOL (approximate) ────────────────────────────────────────────────
+  ['Beer, Regular (12 fl oz)',150,0,0,0,15,13,0,0,2,0,0,15,0,100,'12 fl oz'],
+  ['Beer, Light (12 fl oz)',95,0,0,0,10,5,0,0,1,0,0,10,0,75,'12 fl oz'],
+  ['Beer, IPA (12 fl oz)',200,0,0,0,20,18,0,2,2,0,0,15,0,120,'12 fl oz'],
+  ['Wine, Red (5 fl oz)',125,0,0,0,6,4,0,1,0,0,0,8,0,187,'5 fl oz'],
+  ['Wine, White (5 fl oz)',120,0,0,0,9,4,0,1,0,0,0,10,0,104,'5 fl oz'],
+  ['Champagne / Sparkling Wine (4 fl oz)',90,0,0,0,10,3,0,2,0,0,0,8,0,75,'4 fl oz'],
+  ['Vodka / Tequila / Gin (1.5 fl oz)',97,0,0,0,0,0,0,0,0,0,0,0,0,1,'1.5 fl oz shot'],
+  ['Whiskey / Bourbon (1.5 fl oz)',105,0,0,0,0,0,0,0,0,0,0,0,0,1,'1.5 fl oz shot'],
+  ['Rum (1.5 fl oz)',97,0,0,0,0,0,0,0,0,0,0,0,0,1,'1.5 fl oz shot'],
+  ['Margarita (8 fl oz)',270,0,0,0,60,37,0,34,1,0,0,10,0,35,'8 fl oz'],
+  ['Mojito (8 fl oz)',215,0,0,0,10,28,0,25,1,5,0,5,0,30,'8 fl oz'],
+  ['Piña Colada (8 fl oz)',490,14,12,0,30,68,2,60,2,5,0,25,1,220,'8 fl oz'],
+  ['Vodka Soda (8 fl oz)',100,0,0,0,35,0,0,0,0,0,0,0,0,0,'8 fl oz'],
+  ['Hard Seltzer (12 fl oz)',100,0,0,0,10,2,0,0,1,0,0,0,0,0,'12 fl oz'],
+  ['Hard Cider (12 fl oz)',190,0,0,0,10,23,0,20,1,0,0,10,0,100,'12 fl oz'],
 ];
 
 // Convert DB row to nutrient object
@@ -3243,7 +3634,7 @@ function dbRowToFood(row) {
     polyunsaturatedFat: 0, monounsaturatedFat: 0,
     cholesterol: chol, sodium, totalCarbs: carbs, dietaryFiber: fiber,
     totalSugars: sugars, addedSugars: 0, protein,
-    vitaminC: vitC, vitaminD, vitaminA: 0, vitaminB12: 0,
+    vitaminC: vitC, vitaminD: vitD, vitaminA: 0, vitaminB12: 0,
     calcium, iron, potassium, magnesium: 0, zinc: 0
   };
 }
@@ -3263,7 +3654,7 @@ function searchSavedFoods(query) {
     }
     if (score > 0) results.push({ score, food: { ...f.baseNutrients, name: f.name, _personal: true } });
   }
-  return results.sort((a,b) => b.score - a.score).slice(0, 5).map(r => r.food);
+  return results.sort((a,b) => b.score - a.score).slice(0, 8).map(r => r.food);
 }
 
 function searchOfflineDB(query) {
@@ -3282,20 +3673,28 @@ function searchOfflineDB(query) {
     }
     if (score > 0) results.push({ score, food: dbRowToFood(row) });
   }
-  return results.sort((a,b) => b.score - a.score).slice(0, 5).map(r => r.food);
+  return results.sort((a,b) => b.score - a.score).slice(0, 10).map(r => r.food);
 }
 
 function searchFood(query) {
-  // 100% offline — instant results, no network calls
+  // Fully offline — instant results, no network dependency
   const srw = document.getElementById('search-results-wrap');
+  const sl  = document.getElementById('search-loading');
+  if (sl) sl.style.display = 'none';
   srw.innerHTML = '';
+
+  // Personal saved foods always first (highest priority)
   const personalResults = searchSavedFoods(query);
+  // Built-in food database
   const offlineResults  = searchOfflineDB(query);
+
+  // Merge: personal foods first, then DB foods, deduplicated
   const merged = mergeResults([...personalResults, ...offlineResults]);
+
   if (merged.length) {
     renderSearchResults(merged, false);
   } else {
-    srw.innerHTML = `<div class="no-results">No matches. Try a different spelling or use <strong>Manual Entry</strong>.</div>`;
+    srw.innerHTML = `<div class="no-results">No matches found. Try a shorter search term or use <strong>Manual Entry</strong> to add any food.</div>`;
   }
 }
 
@@ -3305,12 +3704,10 @@ function mergeResults(foods) {
   for (const f of foods) {
     const key = (f.name || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0, 28);
     if (!seen.has(key)) { seen.add(key); merged.push(f); }
-    if (merged.length >= 10) break;
+    if (merged.length >= 15) break;
   }
   return merged;
 }
-
-
 
 function renderSearchResults(foods, stillLoading) {
   const srw = document.getElementById('search-results-wrap');
@@ -3976,11 +4373,8 @@ const MOOD_FACES  = ['','😫','😕','😐','🙂','😄'];
 const MOOD_LABELS = ['','Rough','Poor','OK','Good','Great'];
 const ENERGY_FACES= ['','🪫','😴','⚡','🔋','🚀'];
 
-let _trackTab = 'custom';
-let _ntType   = 'multi';
-let _pendingTrackerDefId = null;
-let _moodLevel  = 0;
-let _moodEnergy = 0;
+let _trackTab = 'custom', _ntType = 'multi', _pendingTrackerDefId = null;
+let _moodLevel = 0, _moodEnergy = 0;
 
 function switchTrackTab(tab, el) {
   _trackTab = tab;
@@ -3992,7 +4386,6 @@ function switchTrackTab(tab, el) {
   if (tab === 'mood')   { renderMoodLog(); initMoodTime(); }
 }
 
-// ── CUSTOM TRACKERS ──────────────────────────────────
 function selectTrackerType(t) {
   _ntType = t;
   document.getElementById('nt-type-once').classList.toggle('active', t === 'once');
@@ -4001,22 +4394,18 @@ function selectTrackerType(t) {
 
 function openNewTracker() {
   _ntType = 'multi';
-  document.getElementById('nt-emoji').value = '';
-  document.getElementById('nt-name').value  = '';
-  document.getElementById('nt-units').value = '';
+  ['nt-emoji','nt-name','nt-units'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   selectTrackerType('multi');
   openModal('modal-new-tracker');
 }
 
 function saveNewTracker() {
-  const emoji = document.getElementById('nt-emoji').value.trim() || '📌';
+  const emoji = (document.getElementById('nt-emoji').value.trim()) || '📌';
   const name  = document.getElementById('nt-name').value.trim();
   const units = document.getElementById('nt-units').value.trim();
   if (!name) { showToast('Enter a tracker name'); return; }
   state.trackerDefs.push({ id: uid(), name, emoji, logType: _ntType, units });
-  save();
-  closeModal('modal-new-tracker');
-  renderTrackerGrid();
+  save(); closeModal('modal-new-tracker'); renderTrackerGrid();
   showToast(emoji + ' ' + name + ' tracker added!');
 }
 
@@ -4033,29 +4422,26 @@ function tapTracker(defId) {
   if (state.readOnly) return;
   const def = state.trackerDefs.find(d => d.id === defId);
   if (!def) return;
-  const today    = todayKey();
-  const todayLogs = state.trackerLogs[today] || [];
-  const alreadyDone = todayLogs.some(l => l.defId === defId);
-
+  const today = todayKey(), todayLogs = state.trackerLogs[today] || [];
   if (def.logType === 'once') {
-    if (alreadyDone) {
+    const done = todayLogs.some(l => l.defId === defId);
+    if (done) {
       state.trackerLogs[today] = todayLogs.filter(l => l.defId !== defId);
       save(); renderTrackerGrid(); renderDashboard();
       showToast('↩️ ' + def.name + ' unchecked');
     } else {
-      state.trackerLogs[today] = [...todayLogs, { id: uid(), defId, timestamp: Date.now(), amount: '', note: '' }];
+      state.trackerLogs[today] = [...todayLogs, { id: uid(), defId, timestamp: Date.now(), amount:'', note:'' }];
       save(); renderTrackerGrid(); renderDashboard();
       showToast('✅ ' + def.name + ' logged!');
     }
   } else {
     _pendingTrackerDefId = defId;
-    const amtLabel = def.units ? `Amount (${def.units})` : 'Amount (optional)';
     document.getElementById('log-tracker-title').textContent = def.emoji + ' ' + def.name;
-    document.getElementById('log-tracker-amount-label').textContent = amtLabel;
+    document.getElementById('log-tracker-amount-label').textContent = def.units ? `Amount (${def.units})` : 'Amount (optional)';
     document.getElementById('log-tracker-amount').value = '';
     document.getElementById('log-tracker-note').value   = '';
     const now = new Date();
-    document.getElementById('log-tracker-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('log-tracker-time').value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     openModal('modal-log-tracker');
   }
 }
@@ -4065,14 +4451,11 @@ function confirmLogTracker() {
   const today  = todayKey();
   const amount = document.getElementById('log-tracker-amount').value.trim();
   const note   = document.getElementById('log-tracker-note').value.trim();
-  const timeV  = document.getElementById('log-tracker-time').value;
-  const [hh, mm] = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
-  const d  = new Date();
-  const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
-  state.trackerLogs[today] = [...(state.trackerLogs[today] || []), { id: uid(), defId: _pendingTrackerDefId, timestamp: ts, amount, note }];
-  save();
-  closeModal('modal-log-tracker');
-  renderTrackerGrid(); renderDashboard();
+  const tv = document.getElementById('log-tracker-time').value;
+  const [hh,mm] = tv ? tv.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
+  const d = new Date(), ts = new Date(d.getFullYear(),d.getMonth(),d.getDate(),hh,mm,0).getTime();
+  state.trackerLogs[today] = [...(state.trackerLogs[today]||[]), { id:uid(), defId:_pendingTrackerDefId, timestamp:ts, amount, note }];
+  save(); closeModal('modal-log-tracker'); renderTrackerGrid(); renderDashboard();
   const def = state.trackerDefs.find(d => d.id === _pendingTrackerDefId);
   const amtStr = amount ? ' · ' + amount + (def?.units ? ' ' + def.units : '') : '';
   showToast('✅ ' + (def ? def.name : 'Entry') + ' logged' + amtStr + '!');
@@ -4082,145 +4465,108 @@ function confirmLogTracker() {
 function renderTrackerGrid() {
   const wrap = document.getElementById('tracker-grid-wrap');
   if (!wrap) return;
-  const today     = todayKey();
-  const todayLogs = state.trackerLogs[today] || [];
-
+  const today = todayKey(), todayLogs = state.trackerLogs[today] || [];
   const items = state.trackerDefs.map(def => {
-    const logs   = todayLogs.filter(l => l.defId === def.id);
-    const done   = logs.length > 0;
-    const isOnce = def.logType === 'once';
-    const lastLog = logs[logs.length - 1];
-    const amtStr  = (lastLog?.amount && def.units) ? `${lastLog.amount} ${def.units}` : (lastLog?.amount || '');
-    return `<div class="tracker-btn ${done && isOnce ? 'done-once' : ''}" onclick="tapTracker('${def.id}')">
-      ${done && isOnce ? '<div class="t-check">✅</div>' : ''}
+    const logs = todayLogs.filter(l => l.defId === def.id);
+    const done = logs.length > 0, isOnce = def.logType === 'once';
+    const last = logs[logs.length-1];
+    const amtStr = (last?.amount && def.units) ? last.amount+' '+def.units : (last?.amount||'');
+    return `<div class="tracker-btn ${done&&isOnce?'done-once':''}" onclick="tapTracker('${def.id}')">
+      ${done&&isOnce?'<div class="t-check">✅</div>':''}
       <div class="t-icon">${def.emoji}</div>
       <div class="t-label">${def.name}</div>
-      ${!isOnce && logs.length ? `<div class="t-count">${logs.length}×${amtStr ? ' · ' + amtStr : ''}</div>` : ''}
-      ${!isOnce && !logs.length ? `<div class="t-count" style="color:var(--text3);">tap to log</div>` : ''}
+      ${!isOnce&&logs.length?`<div class="t-count">${logs.length}×${amtStr?' · '+amtStr:''}</div>`:''}
+      ${!isOnce&&!logs.length?`<div class="t-count" style="color:var(--text3);">tap to log</div>`:''}
     </div>`;
   }).join('');
-
-  const addBtn = `<div class="tracker-add-btn" onclick="openNewTracker()">
-    <div style="font-size:22px;">➕</div>
-    <div>New Tracker</div>
-  </div>`;
-
-  wrap.innerHTML = items + addBtn;
+  wrap.innerHTML = items + `<div class="tracker-add-btn" onclick="openNewTracker()"><div style="font-size:22px;">➕</div><div>New Tracker</div></div>`;
   renderTrackerManage();
 }
 
 function renderTrackerManage() {
   const el = document.getElementById('tracker-manage-list');
   if (!el) return;
-  if (!state.trackerDefs.length) {
-    el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:4px 0;">No trackers yet. Tap ➕ above to create one.</div>';
-    return;
-  }
-  const today     = todayKey();
-  const todayLogs = state.trackerLogs[today] || [];
+  if (!state.trackerDefs.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:4px 0;">No trackers yet. Tap ➕ above to create one.</div>'; return; }
+  const today = todayKey(), todayLogs = state.trackerLogs[today]||[];
   el.innerHTML = state.trackerDefs.map(def => {
-    const logs  = todayLogs.filter(l => l.defId === def.id);
-    const badge = logs.length > 0
-      ? (def.logType === 'once' ? '✅ Done' : `${logs.length}× logged`)
-      : (def.logType === 'once' ? 'Not done' : 'Not logged');
-    const badgeColor = logs.length > 0 ? 'var(--accent)' : 'var(--text3)';
-    const unitsStr   = def.units ? ` (${def.units})` : '';
+    const logs = todayLogs.filter(l=>l.defId===def.id);
+    const badge = logs.length>0 ? (def.logType==='once'?'✅ Done':`${logs.length}× logged`) : (def.logType==='once'?'Not done':'Not logged');
+    const col = logs.length>0 ? 'var(--accent)' : 'var(--text3)';
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);">
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="font-size:20px;">${def.emoji}</span>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);">${def.name}${unitsStr}</div>
-          <div style="font-size:10px;color:var(--text3);">${def.logType === 'once' ? 'Once a day' : 'Multi-log'}</div>
-        </div>
+        <div><div style="font-size:13px;font-weight:700;color:var(--text);">${def.name}${def.units?' ('+def.units+')':''}</div>
+        <div style="font-size:10px;color:var(--text3);">${def.logType==='once'?'Once a day':'Multi-log'}</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="font-size:11px;font-weight:700;color:${badgeColor};">${badge}</div>
+        <div style="font-size:11px;font-weight:700;color:${col};">${badge}</div>
         <div style="font-size:15px;cursor:pointer;color:var(--text3);" onclick="deleteTracker('${def.id}')">✕</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── MOOD ──────────────────────────────────────────────
+// ── MOOD ──────────────────────────────────────────────────────────────────────
 function selMoodLevel(el) {
   _moodLevel = parseInt(el.dataset.lvl);
-  document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b === el));
+  document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b===el));
 }
 function selMoodEnergy(el) {
   _moodEnergy = parseInt(el.dataset.lvl);
-  document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b === el));
+  document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.toggle('active', b===el));
 }
-
 function initMoodTime() {
-  const el = document.getElementById('mood-time-val');
-  if (!el) return;
+  const el = document.getElementById('mood-time-val'); if(!el) return;
   const now = new Date();
-  el.value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  el.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 }
-
 function logMood() {
   if (state.readOnly) return;
   if (!_moodLevel) { showToast('Select how you feel first'); return; }
-  const tags      = [...document.querySelectorAll('#mood-tags .mood-tag.on')].map(t => t.textContent.trim());
+  const tags = [...document.querySelectorAll('#mood-tags .mood-tag.on')].map(t=>t.textContent.trim());
   const timeLabel = document.getElementById('mood-time-label').value;
-  const timeV     = document.getElementById('mood-time-val').value;
-  const note      = document.getElementById('mood-note').value.trim();
-  const [hh, mm]  = timeV ? timeV.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
-  const d  = new Date();
-  const ts = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0).getTime();
+  const tv = document.getElementById('mood-time-val').value;
+  const note = document.getElementById('mood-note').value.trim();
+  const [hh,mm] = tv ? tv.split(':').map(Number) : [new Date().getHours(), new Date().getMinutes()];
+  const d = new Date(), ts = new Date(d.getFullYear(),d.getMonth(),d.getDate(),hh,mm,0).getTime();
   const today = todayKey();
-  state.moodLogs[today] = [...(state.moodLogs[today] || []), { id: uid(), level: _moodLevel, energy: _moodEnergy, tags, timeLabel, note, timestamp: ts }];
+  state.moodLogs[today] = [...(state.moodLogs[today]||[]), { id:uid(), level:_moodLevel, energy:_moodEnergy, tags, timeLabel, note, timestamp:ts }];
   save();
-  _moodLevel = 0; _moodEnergy = 0;
-  document.querySelectorAll('#mood-level-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('#mood-energy-btns .mood-level-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('#mood-tags .mood-tag').forEach(t => t.classList.remove('on'));
+  _moodLevel=0; _moodEnergy=0;
+  document.querySelectorAll('#mood-level-btns .mood-level-btn, #mood-energy-btns .mood-level-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#mood-tags .mood-tag').forEach(t=>t.classList.remove('on'));
   document.getElementById('mood-note').value = '';
-  initMoodTime();
-  renderMoodLog(); renderDashboard();
+  initMoodTime(); renderMoodLog(); renderDashboard();
   showToast('😊 Mood logged!');
 }
-
 function deleteMoodLog(dateKey, id) {
-  state.moodLogs[dateKey] = (state.moodLogs[dateKey] || []).filter(e => e.id !== id);
+  state.moodLogs[dateKey] = (state.moodLogs[dateKey]||[]).filter(e=>e.id!==id);
   save(); renderMoodLog(); renderDashboard();
 }
-
 function renderMoodLog() {
-  const ll   = document.getElementById('mood-log-list');
-  if (!ll) return;
+  const ll = document.getElementById('mood-log-list'); if(!ll) return;
   const today = todayKey();
-  const logs  = [...(state.moodLogs[today] || [])].sort((a,b) => a.timestamp - b.timestamp);
-
+  const logs = [...(state.moodLogs[today]||[])].sort((a,b)=>a.timestamp-b.timestamp);
   const strip = document.getElementById('mood-today-strip');
   if (strip && logs.length) {
-    const avg = Math.round(logs.reduce((s,l) => s + l.level, 0) / logs.length);
+    const avg = Math.round(logs.reduce((s,l)=>s+l.level,0)/logs.length);
     strip.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;">
       <div style="font-size:36px;">${MOOD_FACES[avg]||'😐'}</div>
-      <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;color:var(--accent);">TODAY'S MOOD</div>
-        <div style="font-size:13px;color:var(--text2);">${MOOD_LABELS[avg]||'OK'} · ${logs.length} entr${logs.length===1?'y':'ies'}</div>
-        <div style="display:flex;gap:5px;margin-top:4px;">${logs.map(l=>`<span style="font-size:16px;">${MOOD_FACES[l.level]||'😐'}</span>`).join('')}</div>
-      </div>
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;color:var(--accent);">TODAY'S MOOD</div>
+      <div style="font-size:13px;color:var(--text2);">${MOOD_LABELS[avg]||'OK'} · ${logs.length} entr${logs.length===1?'y':'ies'}</div>
+      <div style="display:flex;gap:5px;margin-top:4px;">${logs.map(l=>`<span style="font-size:16px;">${MOOD_FACES[l.level]||'😐'}</span>`).join('')}</div></div>
     </div>`;
-  } else if (strip) { strip.innerHTML = ''; }
-
-  if (!logs.length) {
-    ll.innerHTML = '<div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.<br>Use the form above to log how you feel.</div></div>';
-    return;
-  }
+  } else if (strip) strip.innerHTML='';
+  if (!logs.length) { ll.innerHTML='<div class="empty-state" style="padding:20px 0;"><div class="empty-state-icon" style="font-size:28px;">😐</div><div class="empty-state-text">No mood logged yet today.</div></div>'; return; }
   ll.innerHTML = logs.map(e => {
-    const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
-    const ampm = hh >= 12 ? 'PM' : 'AM'; const h12 = hh % 12 || 12;
-    const energyStr = e.energy ? ` · Energy: ${ENERGY_FACES[e.energy]}` : '';
-    const tagsStr   = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
+    const t=new Date(e.timestamp), hh=t.getHours(), mm=t.getMinutes().toString().padStart(2,'0');
+    const ampm=hh>=12?'PM':'AM', h12=hh%12||12;
+    const energyStr=e.energy?` · Energy: ${ENERGY_FACES[e.energy]}`:'';
+    const tagsStr=e.tags?.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>`:'';
     return `<div class="mood-entry-strip">
       <div class="mood-face">${MOOD_FACES[e.level]||'😐'}</div>
-      <div class="mood-info">
-        <div class="mood-title">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
-        <div class="mood-meta">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>
-        ${tagsStr}
-      </div>
+      <div class="mood-info"><div class="mood-title">${MOOD_LABELS[e.level]||'OK'}${energyStr}</div>
+      <div class="mood-meta">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>${tagsStr}</div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
         <div class="mood-time">${h12}:${mm} ${ampm}</div>
         <div style="font-size:13px;cursor:pointer;color:var(--text3);" onclick="deleteMoodLog('${today}','${e.id}')">✕</div>
@@ -4229,109 +4575,47 @@ function renderMoodLog() {
   }).join('');
 }
 
-// ── DASHBOARD CARDS ───────────────────────────────────
+// ── DASHBOARD CARDS ───────────────────────────────────────────────────────────
 function renderDashTrackCard() {
-  const dtc = document.getElementById('dashboard-track-card');
-  const dmc = document.getElementById('dashboard-mood-card');
-  if (!dtc || !dmc) return;
-  const today     = todayKey();
-  const todayLogs = state.trackerLogs[today] || [];
-
+  const dtc=document.getElementById('dashboard-track-card'), dmc=document.getElementById('dashboard-mood-card');
+  if (!dtc||!dmc) return;
+  const today=todayKey(), tLogs=state.trackerLogs[today]||[];
   if (state.trackerDefs.length) {
     const items = state.trackerDefs.map(def => {
-      const logs  = todayLogs.filter(l => l.defId === def.id);
-      const done  = logs.length > 0;
-      const isOnce = def.logType === 'once';
-      const badge  = done ? (isOnce ? '✅' : `${logs.length}×`) : '○';
-      const col    = done ? 'var(--accent)' : 'var(--text3)';
-      return `<div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:15px;">${def.emoji}</span>
-        <span style="font-size:11px;font-weight:700;color:${col};">${badge}</span>
-        <span style="font-size:11px;color:var(--text2);">${def.name}</span>
-      </div>`;
+      const logs=tLogs.filter(l=>l.defId===def.id), done=logs.length>0;
+      const badge=done?(def.logType==='once'?'✅':`${logs.length}×`):'○', col=done?'var(--accent)':'var(--text3)';
+      return `<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;">${def.emoji}</span><span style="font-size:11px;font-weight:700;color:${col};">${badge}</span><span style="font-size:11px;color:var(--text2);">${def.name}</span></div>`;
     }).join('');
-    dtc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,.2);">
-      <div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers Today</div></div>
-      <div class="card-body" style="padding-top:0;display:flex;flex-direction:column;gap:7px;">${items}</div>
-    </div>`;
-  } else { dtc.innerHTML = ''; }
-
-  const todayMood = state.moodLogs[today] || [];
+    dtc.innerHTML=`<div class="card" style="margin-bottom:12px;border-color:rgba(0,229,160,.2);"><div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers Today</div></div><div class="card-body" style="padding-top:0;display:flex;flex-direction:column;gap:7px;">${items}</div></div>`;
+  } else dtc.innerHTML='';
+  const todayMood=state.moodLogs[today]||[];
   if (todayMood.length) {
-    const latest = todayMood[todayMood.length - 1];
-    const avg    = Math.round(todayMood.reduce((s,l) => s + l.level, 0) / todayMood.length);
-    dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.2);">
-      <div class="card-header">
-        <div class="card-title" style="color:var(--accent4);">😊 Mood Today</div>
-        <div style="font-size:20px;">${todayMood.map(l=>MOOD_FACES[l.level]).join('')}</div>
-      </div>
-      <div class="card-body" style="padding-top:0;display:flex;align-items:center;gap:10px;">
-        <div style="font-size:32px;">${MOOD_FACES[avg]||'😐'}</div>
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);">${MOOD_LABELS[avg]||'OK'}${latest.energy?' · '+ENERGY_FACES[latest.energy]:''}</div>
-          <div style="font-size:11px;color:var(--text3);">${latest.timeLabel||''}${latest.tags?.length?' · '+latest.tags.slice(0,3).join(', '):''}${latest.note?' · "'+latest.note+'"':''}</div>
-        </div>
-      </div>
-    </div>`;
+    const latest=todayMood[todayMood.length-1], avg=Math.round(todayMood.reduce((s,l)=>s+l.level,0)/todayMood.length);
+    dmc.innerHTML=`<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.2);"><div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood Today</div><div style="font-size:20px;">${todayMood.map(l=>MOOD_FACES[l.level]).join('')}</div></div><div class="card-body" style="padding-top:0;display:flex;align-items:center;gap:10px;"><div style="font-size:32px;">${MOOD_FACES[avg]||'😐'}</div><div><div style="font-size:13px;font-weight:700;color:var(--text);">${MOOD_LABELS[avg]||'OK'}${latest.energy?' · '+ENERGY_FACES[latest.energy]:''}</div><div style="font-size:11px;color:var(--text3);">${latest.timeLabel||''}${latest.tags?.length?' · '+latest.tags.slice(0,3).join(', '):''}${latest.note?' · "'+latest.note+'"':''}</div></div></div></div>`;
   } else {
-    dmc.innerHTML = `<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.15);">
-      <div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood Today</div></div>
-      <div class="card-body" style="padding-top:0;font-size:12px;color:var(--text3);">No mood logged. Tap <strong style="color:var(--accent4);">Track → Mood</strong> to log how you feel.</div>
-    </div>`;
+    dmc.innerHTML=`<div class="card" style="margin-bottom:12px;border-color:rgba(255,209,102,.15);"><div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood Today</div></div><div class="card-body" style="padding-top:0;font-size:12px;color:var(--text3);">No mood logged. Tap <strong style="color:var(--accent4);">Track → Mood</strong> to log how you feel.</div></div>`;
   }
 }
 
-// ── HISTORY INTEGRATION ───────────────────────────────
+// ── HISTORY INTEGRATION ───────────────────────────────────────────────────────
 function renderTrackHistoryCards(key) {
-  let html = '';
-  const tLogs = state.trackerLogs[key] || [];
+  let html='';
+  const tLogs=state.trackerLogs[key]||[];
   if (tLogs.length) {
-    const byDef = {};
-    tLogs.forEach(l => { (byDef[l.defId] = byDef[l.defId] || []).push(l); });
-    const rows = Object.entries(byDef).map(([defId, logs]) => {
-      const def    = state.trackerDefs.find(d => d.id === defId);
-      const emoji  = def?.emoji || '📌';
-      const name   = def?.name  || 'Unknown';
-      const isOnce = def?.logType === 'once';
-      const units  = def?.units  || '';
-      const detail = isOnce ? '✅ Done' : logs.map(l => {
-        const t = new Date(l.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
-        const amtStr = l.amount ? ` ${l.amount}${units?' '+units:''}` : '';
-        return `${hh%12||12}:${mm}${hh>=12?'PM':'AM'}${amtStr}${l.note?' ('+l.note+')':''}`;
-      }).join(', ');
-      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
-        <span style="font-size:18px;">${emoji}</span>
-        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${name}</div>
-        <div style="font-size:11px;color:var(--text3);">${detail}</div></div>
-        <span style="font-size:11px;font-weight:700;color:var(--accent);">${isOnce?'✅':`${logs.length}×`}</span>
-      </div>`;
+    const byDef={};
+    tLogs.forEach(l=>{(byDef[l.defId]=byDef[l.defId]||[]).push(l);});
+    const rows=Object.entries(byDef).map(([defId,logs])=>{
+      const def=state.trackerDefs.find(d=>d.id===defId), emoji=def?.emoji||'📌', name=def?.name||'Unknown', isOnce=def?.logType==='once', units=def?.units||'';
+      const detail=isOnce?'✅ Done':logs.map(l=>{const t=new Date(l.timestamp),hh=t.getHours(),mm=t.getMinutes().toString().padStart(2,'0'),amtStr=l.amount?(` ${l.amount}${units?' '+units:''}`):'';return `${hh%12||12}:${mm}${hh>=12?'PM':'AM'}${amtStr}${l.note?' ('+l.note+')':''}`;}).join(', ');
+      return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);"><span style="font-size:18px;">${emoji}</span><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${name}</div><div style="font-size:11px;color:var(--text3);">${detail}</div></div><span style="font-size:11px;font-weight:700;color:var(--accent);">${isOnce?'✅':`${logs.length}×`}</span></div>`;
     }).join('');
-    html += `<div class="card" style="margin-bottom:10px;border-color:rgba(0,229,160,.2);">
-      <div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers</div></div>
-      <div class="card-body" style="padding-top:0;">${rows}</div>
-    </div>`;
+    html+=`<div class="card" style="margin-bottom:10px;border-color:rgba(0,229,160,.2);"><div class="card-header"><div class="card-title" style="color:var(--accent);">📋 Trackers</div></div><div class="card-body" style="padding-top:0;">${rows}</div></div>`;
   }
-  const mLogs = [...(state.moodLogs[key] || [])].sort((a,b) => a.timestamp - b.timestamp);
+  const mLogs=[...(state.moodLogs[key]||[])].sort((a,b)=>a.timestamp-b.timestamp);
   if (mLogs.length) {
-    const avg  = Math.round(mLogs.reduce((s,l)=>s+l.level,0)/mLogs.length);
-    const rows = mLogs.map(e => {
-      const t = new Date(e.timestamp); const hh = t.getHours(); const mm = t.getMinutes().toString().padStart(2,'0');
-      const ampm = hh>=12?'PM':'AM'; const h12 = hh%12||12;
-      const tagsStr = e.tags?.length ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>` : '';
-      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
-        <div style="font-size:24px;flex-shrink:0;">${MOOD_FACES[e.level]||'😐'}</div>
-        <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${MOOD_LABELS[e.level]||'OK'}${e.energy?' · '+ENERGY_FACES[e.energy]:''}</div>
-        <div style="font-size:11px;color:var(--text3);">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>${tagsStr}</div>
-        <div style="font-size:11px;color:var(--text3);flex-shrink:0;font-weight:600;">${h12}:${mm} ${ampm}</div>
-      </div>`;
-    }).join('');
-    html += `<div class="card" style="margin-bottom:10px;border-color:rgba(255,209,102,.2);">
-      <div class="card-header">
-        <div class="card-title" style="color:var(--accent4);">😊 Mood</div>
-        <div style="font-size:18px;">${mLogs.map(l=>MOOD_FACES[l.level]).join('')}</div>
-      </div>
-      <div class="card-body" style="padding-top:0;">${rows}</div>
-    </div>`;
+    const avg=Math.round(mLogs.reduce((s,l)=>s+l.level,0)/mLogs.length);
+    const rows=mLogs.map(e=>{const t=new Date(e.timestamp),hh=t.getHours(),mm=t.getMinutes().toString().padStart(2,'0'),ampm=hh>=12?'PM':'AM',h12=hh%12||12;const tagsStr=e.tags?.length?`<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;">${e.tags.map(tag=>`<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:rgba(0,229,160,.1);color:var(--accent);font-weight:600;">${tag}</span>`).join('')}</div>`:'';return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);"><div style="font-size:24px;flex-shrink:0;">${MOOD_FACES[e.level]||'😐'}</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--text);">${MOOD_LABELS[e.level]||'OK'}${e.energy?' · '+ENERGY_FACES[e.energy]:''}</div><div style="font-size:11px;color:var(--text3);">${e.timeLabel||''}${e.note?' · '+e.note:''}</div>${tagsStr}</div><div style="font-size:11px;color:var(--text3);flex-shrink:0;font-weight:600;">${h12}:${mm} ${ampm}</div></div>`;}).join('');
+    html+=`<div class="card" style="margin-bottom:10px;border-color:rgba(255,209,102,.2);"><div class="card-header"><div class="card-title" style="color:var(--accent4);">😊 Mood</div><div style="font-size:18px;">${mLogs.map(l=>MOOD_FACES[l.level]).join('')}</div></div><div class="card-body" style="padding-top:0;">${rows}</div></div>`;
   }
   return html;
 }
@@ -4350,7 +4634,7 @@ init();
     </div>
     <div class="input-group">
       <div class="input-label">Emoji Icon</div>
-      <input class="input-field" type="text" id="nt-emoji" placeholder="e.g. 💊 🚿 ☕ 📖 🧴" maxlength="4" style="font-size:22px;text-align:center;padding:10px;">
+      <input class="input-field" type="text" id="nt-emoji" placeholder="💊 🚿 ☕ 📖 🧴" maxlength="4" style="font-size:22px;text-align:center;padding:10px;">
     </div>
     <div class="input-group">
       <div class="input-label">Tracker Name</div>
@@ -4384,7 +4668,7 @@ init();
     <div class="modal-handle"></div>
     <div class="modal-title" id="log-tracker-title" style="color:var(--accent);">Log Entry</div>
     <div class="input-group" id="log-tracker-amount-group">
-      <div class="input-label" id="log-tracker-amount-label">Amount</div>
+      <div class="input-label" id="log-tracker-amount-label">Amount (optional)</div>
       <input class="input-field" type="number" id="log-tracker-amount" placeholder="e.g. 1" min="0" step="any" style="font-size:15px;">
     </div>
     <div class="input-group">
