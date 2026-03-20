@@ -464,7 +464,7 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       <!-- Miles + Weight mini trackers -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <div style="background:linear-gradient(135deg,#0d1a2e,#0a1628);border:1px solid rgba(0,184,255,0.25);border-radius:var(--radius);padding:14px 16px;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--accent2);margin-bottom:4px;">🏃 TODAY'S MILES</div>
+          <div id="dash-miles-title" style="font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:1px;color:var(--accent2);margin-bottom:4px;">🏃 TODAY'S MILES</div>
           <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1;" id="dash-miles-val">0.00</div>
           <div style="font-size:10px;color:var(--text3);margin-top:3px;" id="dash-miles-sub">No cardio logged</div>
         </div>
@@ -1707,19 +1707,49 @@ function renderDashboard() {
     deficitEl.previousElementSibling.textContent = 'Deficit';
   }
 
-  // Miles + weight mini trackers (today only)
-  if (currentPeriod === 'day') {
-    const todayCardio = (state.workouts[todayKey()] || []).filter(w => w.category === 'cardio');
-    const totalMiles = todayCardio.reduce((s,w) => s + (w.distance||0), 0);
-    const totalCardioMins = todayCardio.reduce((s,w) => s + (w.duration||0), 0);
-    const milesEl = document.getElementById('dash-miles-val');
+  // Miles + weight mini trackers — works for day / week / month
+  {
+    // Build date keys for the current period (same logic as getNutrientsForPeriod)
+    const periodKeys = [];
+    if (currentPeriod === 'day') {
+      periodKeys.push(todayKey());
+    } else {
+      const count = currentPeriod === 'week' ? 7 : 30;
+      const base = new Date();
+      for (let i = count - 1; i >= 0; i--) {
+        const dd = new Date(base); dd.setDate(base.getDate() - i);
+        periodKeys.push(`${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}`);
+      }
+    }
+
+    // Aggregate cardio across all period days
+    let totalMiles = 0, totalCardioMins = 0, totalSessions = 0;
+    periodKeys.forEach(k => {
+      const cardio = (state.workouts[k] || []).filter(w => w.category === 'cardio');
+      totalMiles     += cardio.reduce((s,w) => s + (w.distance||0), 0);
+      totalCardioMins += cardio.reduce((s,w) => s + (w.duration||0), 0);
+      totalSessions  += cardio.length;
+    });
+
+    const milesEl  = document.getElementById('dash-miles-val');
     const milesSub = document.getElementById('dash-miles-sub');
+    const periodLabel = currentPeriod === 'day' ? 'today' : currentPeriod === 'week' ? 'this week' : 'this month';
+
     if (milesEl) milesEl.textContent = totalMiles > 0 ? totalMiles.toFixed(2) : '0.00';
     if (milesSub) {
-      if (totalMiles > 0) milesSub.textContent = `${totalCardioMins} min · ${todayCardio.length} session${todayCardio.length!==1?'s':''}`;
-      else if (totalCardioMins > 0) milesSub.textContent = `${totalCardioMins} min · distance not logged`;
-      else milesSub.textContent = 'No cardio logged';
+      if (totalMiles > 0)       milesSub.textContent = `${totalCardioMins} min · ${totalSessions} session${totalSessions!==1?'s':''} ${periodLabel}`;
+      else if (totalCardioMins > 0) milesSub.textContent = `${totalCardioMins} min ${periodLabel} · no distance`;
+      else                      milesSub.textContent = `No cardio ${periodLabel}`;
     }
+
+    // Update the mini-card label to reflect period
+    const milesTitleEl = document.getElementById('dash-miles-title');
+    if (milesTitleEl) {
+      const label = currentPeriod === 'day' ? "TODAY'S MILES" : currentPeriod === 'week' ? "WEEK'S MILES" : "MONTH'S MILES";
+      milesTitleEl.textContent = '🏃 ' + label;
+    }
+
+    // Weight: today's latest regardless of period (no aggregate weight)
     const todayWeightsArr = state.weights[todayKey()] || [];
     const latestWt = todayWeightsArr.length ? todayWeightsArr[todayWeightsArr.length-1] : null;
     const wtEl  = document.getElementById('dash-weight-val');
